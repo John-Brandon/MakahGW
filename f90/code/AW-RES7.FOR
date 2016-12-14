@@ -617,11 +617,11 @@ C      Print [N8] + [N7] statistics
 C      Add extra information: initial, final & minimum depletion in each trial
 C      WRITE(IOUT2,
 C     +   '(//A6,2(2(A6,''Depletion''),2A8,2x)/1(4X,12A8), 
-C     +        110(/I4,12F8.3))'),
+C     +        110(/I4,12F8.3)')
 
        WRITE(IOUT2,
      +   '(//A6,2(2(A6,''Depletion''),2A8,2x)/1(4X,12A8), 
-     +        110(/I4,12F8.3)')
+     +        110(/I4,12F8.3))'),
      +       'Trial','Init.','Fin.','RPL','RPL',
      +               'Init.','Fin.','RPL','RPL',
      +       ('Fmat','1+',I=1,3),('Fmat','1+',I=1,3),
