@@ -1,0 +1,6 @@
+0.001d0          Q
+0.001d0          qhist
+0.11d0          cvadd
+0.25d0          alfa
+0.8d0          gamma
+0.0d0          p0hist

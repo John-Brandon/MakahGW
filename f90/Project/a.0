@@ -1,0 +1,564 @@
+ Hello from line 312: Initialisation
+ REF: GB01A     
+ DESC: BASE CASE: 4.5%/4.5%; FNeed=340/7; Survey B; Immigration = 2                    
+ PARFIL: GB01A.PAR   
+ MATFIL: MATRIXB.DAT 
+ 
+ About to try to open MANAGE.DAT
+ About to open AW-RES file
+ MANAGEI
+ DOCON           0
+ CCONST1   0.00000000000000     
+ CCONST2   0.00000000000000     
+ PCFGCASE           1
+ HERE          43
+        2010        2012
+        2010           1
+ Bias:   1.000
+  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+
+  0.000
+ Bias:   1.000
+  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000
+
+  0.000
+ Attempting to open PARFIL
+ PARFIL =GB01A.PAR   
+ About to try to read the GUP2 file tuning.txt
+ Finished with Trial number           1
+ Finished with Trial number           2
+ Finished with Trial number           3
+ Finished with Trial number           4
+ Finished with Trial number           5
+ Finished with Trial number           6
+ Finished with Trial number           7
+ Finished with Trial number           8
+ Finished with Trial number           9
+ Finished with Trial number          10
+ Finished with Trial number          11
+ Finished with Trial number          12
+ Finished with Trial number          13
+ Finished with Trial number          14
+ Finished with Trial number          15
+ Finished with Trial number          16
+ Finished with Trial number          17
+ Finished with Trial number          18
+ Finished with Trial number          19
+ Finished with Trial number          20
+ Finished with Trial number          21
+ Finished with Trial number          22
+ Finished with Trial number          23
+ Finished with Trial number          24
+ Finished with Trial number          25
+ Finished with Trial number          26
+ Finished with Trial number          27
+ Finished with Trial number          28
+ Finished with Trial number          29
+ Finished with Trial number          30
+ Finished with Trial number          31
+ Finished with Trial number          32
+ Finished with Trial number          33
+ Finished with Trial number          34
+ Finished with Trial number          35
+ Finished with Trial number          36
+ Finished with Trial number          37
+ Finished with Trial number          38
+ Finished with Trial number          39
+ Finished with Trial number          40
+ Finished with Trial number          41
+ Finished with Trial number          42
+ Finished with Trial number          43
+ Finished with Trial number          44
+ Finished with Trial number          45
+ Finished with Trial number          46
+ Finished with Trial number          47
+ Finished with Trial number          48
+ Finished with Trial number          49
+ Finished with Trial number          50
+ Finished with Trial number          51
+ Finished with Trial number          52
+ Finished with Trial number          53
+ Finished with Trial number          54
+ Finished with Trial number          55
+ Finished with Trial number          56
+ Finished with Trial number          57
+ Finished with Trial number          58
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED      -25333
+ INEXT  1070610066
+ INEXTP          41
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           1
+ INEXTP          32
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           2
+ INEXTP          33
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           3
+ INEXTP          34
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           4
+ INEXTP          35
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           5
+ INEXTP          36
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           6
+ INEXTP          37
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           7
+ INEXTP          38
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           8
+ INEXTP          39
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED      -12287
+ INEXT  1069511809
+ INEXTP          41
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           1
+ INEXTP          32
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           2
+ INEXTP          33
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           3
+ INEXTP          34
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           4
+ INEXTP          35
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           5
+ INEXTP          36
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           6
+ INEXTP          37
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           7
+ INEXTP          38
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           8
+ INEXTP          39
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED      -74748
+ INEXT  1072163679
+ INEXTP          41
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           1
+ INEXTP          32
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           2
+ INEXTP          33
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           3
+ INEXTP          34
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           4
+ INEXTP          35
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           5
+ INEXTP          36
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           6
+ INEXTP          37
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           7
+ INEXTP          38
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           8
+ INEXTP          39
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED      -81140
+ INEXT  1072297732
+ INEXTP          41
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           1
+ INEXTP          32
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           2
+ INEXTP          33
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           3
+ INEXTP          34
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           4
+ INEXTP          35
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           5
+ INEXTP          36
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           6
+ INEXTP          37
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           7
+ INEXTP          38
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ 
+ 1. ABOUT TO CALL RAN1 FROM GAMMAZ
+ ISEED           1
+ INEXT           8
+ INEXTP          39
+ 1. FINISHED CALL RAN1 FROM GAMMAZ
+ Finished with Trial number          59
+ ---------------------------------------------
+ Starting new year          96
+ Trial number          60
+ Calling SLC to set block quota for North
+ Calling SLC to set block quota for PCFG
+ Calling DATGEN sets abundance estimate and CV
+ 
+ ABOUT TO CALL FIRST RAN1()          60          96
+ FINISHED FIRST RAN1() CALL
+ SETDAT           0
+ ISEED1           1
+ INEXT1          38
+ INXTP1          14
+ 
+ ABOUT TO CALL SECOND RAN1()          60          96
+ FINISHED SECOND RAN1() CALL
+ SETDAT           0
+ ISEED1           1
+ INEXT1          40
+ INXTP1          16
+ ABOUT TO CALL GAMMAZ
+ 
+ 2. ABOUT TO CALL RAN1 FROM GAMMAZ
+ 2. FINISHED CALL RAN1 FROM GAMMAZ
+ EXITING GAMMAZ
+ EXITING DATGEN
+ 
+ ABOUT TO CALL FIRST RAN1()          60          96
+ FINISHED FIRST RAN1() CALL
+ SETDAT           0
+ ISEED1           1
+ INEXT1          43
+ INXTP1          19
+ 
+ ABOUT TO CALL SECOND RAN1()          60          96
+ FINISHED SECOND RAN1() CALL
+ SETDAT           0
+ ISEED1           1
+ INEXT1          45
+ INXTP1          21
+ ABOUT TO CALL GAMMAZ
+ 
+ 2. ABOUT TO CALL RAN1 FROM GAMMAZ
+ 2. FINISHED CALL RAN1 FROM GAMMAZ
+ EXITING GAMMAZ
+ EXITING DATGEN
+ DATGEN call completed
+ Limit reached, proceeding with book-keeping
+ Finished calling STKUPA(), IS =            1
+ Finished calling STKUPA(), IS =            2
+ 
+ About to call ComputePSURVObs()
+ Looping to next year
+ Current Year          96
+ ---------------------------------------------
+ Starting new year          97
+ Trial number          60
+ Calling SLC to set block quota for North
+ Calling SLC to set block quota for PCFG
+ Calling DATGEN sets abundance estimate and CV
+ 
+ ABOUT TO CALL FIRST RAN1()          60          97
+ FINISHED FIRST RAN1() CALL
+ SETDAT           0
+ ISEED1           1
+ INEXT1          48
+ INXTP1          24
+ 
+ ABOUT TO CALL SECOND RAN1()          60          97
+ FINISHED SECOND RAN1() CALL
+ SETDAT           0
+ ISEED1           1
+ INEXT1          50
+ INXTP1          26
+ 
+ ABOUT TO CALL FIRST RAN1()          60          97
+ FINISHED FIRST RAN1() CALL
+ SETDAT           0
+ ISEED1           1
+ INEXT1          53
+ INXTP1          29
+ 
+ ABOUT TO CALL SECOND RAN1()          60          97
+ FINISHED SECOND RAN1() CALL
+ SETDAT           0
+ ISEED1           1
+ INEXT1          55
+ INXTP1          31
+ ABOUT TO CALL GAMMAZ
+ HELLO FROM AWEXTRD.FOR RAN1 for inext check
+ ISEED           0
+ INEXT       73769
+ INEXTP       98817
+ MA(INEXT)   3168190.00000000     
+ HELLO FROM AWEXTRD.FOR RAN1 for inextp check
+ ISEED           0
+ INEXTP       98817
+ INEXT           1
+ MA(INEXTP)   391245.000000000     
+ 
+ 2. ABOUT TO CALL RAN1 FROM GAMMAZ
+ 2. FINISHED CALL RAN1 FROM GAMMAZ
+ EXITING GAMMAZ
+ EXITING DATGEN
+ DATGEN call completed
+ Limit reached, proceeding with book-keeping
+ Finished calling STKUPA(), IS =            1
+ Finished calling STKUPA(), IS =            2
+ 
+ About to call ComputePSURVObs()
+ Looping to next year
+ Current Year          97
+ ---------------------------------------------
+ Starting new year          98
+ Trial number          60
+ Calling SLC to set block quota for North
+ Calling SLC to set block quota for PCFG
+ Calling DATGEN sets abundance estimate and CV
+ 
+ ABOUT TO CALL FIRST RAN1()          60          98
+ FINISHED FIRST RAN1() CALL
+ SETDAT           0
+ ISEED1           1
+ INEXT1           3
+ INXTP1          34
+ 
+ ABOUT TO CALL SECOND RAN1()          60          98
+ FINISHED SECOND RAN1() CALL
+ SETDAT           0
+ ISEED1           1
+ INEXT1           5
+ INXTP1          36
+ 
+ ABOUT TO CALL FIRST RAN1()          60          98
+ FINISHED FIRST RAN1() CALL
+ SETDAT           0
+ ISEED1           1
+ INEXT1           8
+ INXTP1          39
+ 
+ ABOUT TO CALL SECOND RAN1()          60          98
+ FINISHED SECOND RAN1() CALL
+ SETDAT           0
+ ISEED1           1
+ INEXT1          10
+ INXTP1          41
+ ABOUT TO CALL GAMMAZ
+ 
+ 2. ABOUT TO CALL RAN1 FROM GAMMAZ
+ 2. FINISHED CALL RAN1 FROM GAMMAZ
+ EXITING GAMMAZ
+ EXITING DATGEN
+ DATGEN call completed
+ Limit reached, proceeding with book-keeping
+ Finished calling STKUPA(), IS =            1
+ Finished calling STKUPA(), IS =            2
+ 
+ About to call ComputePSURVObs()
+ Looping to next year
+ Current Year          98
+ ---------------------------------------------
+ Starting new year          99
+ Trial number          60
+ Calling SLC to set block quota for North
+ Calling SLC to set block quota for PCFG
+ Calling DATGEN sets abundance estimate and CV
+ 
+ ABOUT TO CALL FIRST RAN1()          60          99
+ FINISHED FIRST RAN1() CALL
+ SETDAT           0
+ ISEED1           1
+ INEXT1          13
+ INXTP1          44
+ 
+ ABOUT TO CALL SECOND RAN1()          60          99
+ FINISHED SECOND RAN1() CALL
+ SETDAT           0
+ ISEED1           1
+ INEXT1          15
+ INXTP1          46
+ 
+ ABOUT TO CALL FIRST RAN1()          60          99
+ FINISHED FIRST RAN1() CALL
+ SETDAT           0
+ ISEED1           1
+ INEXT1          18
+ INXTP1          49
+ 
+ ABOUT TO CALL SECOND RAN1()          60          99
+ FINISHED SECOND RAN1() CALL
+ SETDAT           0
+ ISEED1           1
+ INEXT1          20
+ INXTP1          51
+ DATGEN call completed
+ Limit reached, proceeding with book-keeping
+ Finished calling STKUPA(), IS =            1
+ Finished calling STKUPA(), IS =            2
+ 
+ About to call ComputePSURVObs()
+ Looping to next year
+ Current Year          99
+ Finished looping over years for this trial          60
+ Finished with Trial number          60
+ Finished with Trial number          61
+ Finished with Trial number          62
+ Finished with Trial number          63
+ Finished with Trial number          64
+ Finished with Trial number          65
+ Finished with Trial number          66
+ Finished with Trial number          67
+ Finished with Trial number          68
+ Finished with Trial number          69
+ Finished with Trial number          70
+ Finished with Trial number          71
+ Finished with Trial number          72
+ Finished with Trial number          73
+ Finished with Trial number          74
+ Finished with Trial number          75
+ Finished with Trial number          76
+ Finished with Trial number          77
+ Finished with Trial number          78
+ Finished with Trial number          79
+ Finished with Trial number          80
+ Finished with Trial number          81
+ Finished with Trial number          82
+ Finished with Trial number          83
+ Finished with Trial number          84
+ Finished with Trial number          85
+ Finished with Trial number          86
+ Finished with Trial number          87
+ Finished with Trial number          88
+ Finished with Trial number          89
+ Finished with Trial number          90
+ Finished with Trial number          91
+ Finished with Trial number          92
+ Finished with Trial number          93
+ Finished with Trial number          94
+ Finished with Trial number          95
+ Finished with Trial number          96
+ Finished with Trial number          97
+ Finished with Trial number          98
+ Finished with Trial number          99
+ Finished with Trial number         100

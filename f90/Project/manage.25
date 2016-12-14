@@ -1,0 +1,6 @@
+     Set strike limits using SLC
+0    NOT CONDITIONING  (0)
+0    CONSTANT FOR NORTH
+0    CONSTANT FOR PCFG
+25   PCFGCASE
+4    Month of harvest
