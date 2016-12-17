@@ -64,7 +64,7 @@ VPATH = ./f90/code/
 # Compile executable using MODULAR APPROACH ----------------------------------------------
 # NOTE: Executable file is written to f90/Project directory		
 # -O3 flag for max run time speed
-$(PROJ_DIR)/main.app: $(OBJECT_FILES)
+$(PROJ_DIR)/main.app: $(OBJECT_FILES) $(PROJ_DIR)/proc.app $(PROJ_DIR)/aw-res7.app
 	gfortran $(GFFLAGS) $(OBJECT_FILES) -O3 -o $(PROJ_DIR)/main.app;
 
 # Main program object file
@@ -127,6 +127,26 @@ $(CODE_DIR)/JBSLC.o: $(CODE_DIR)/JBSLC.FOR
 $(CODE_DIR)/GUP2.o: $(CODE_DIR)/GUP2.FOR 
 	cd $(CODE_DIR);\
 	gfortran $(GFFLAGS) -c GUP2.FOR;
+
+# Compile executables that format output ------------------------------------------------
+$(PROJ_DIR)/proc.app: $(CODE_DIR)/proc.o 
+	gfortran $(GFFLAGS) $(CODE_DIR)/proc.o -o $(PROJ_DIR)/proc.app	
+
+$(CODE_DIR)/proc.o: $(CODE_DIR)/Proc.FOR
+	cd $(CODE_DIR);\
+	gfortran $(GFFLAGS) -c Proc.FOR
+
+$(PROJ_DIR)/aw-res7.app: $(CODE_DIR)/aw-res7.o 
+	gfortran $(GFFLAGS) $(CODE_DIR)/aw-res7.o -o $(PROJ_DIR)/aw-res7.app	
+# 	mv $(CODE_DIR)/aw-res7.app $(PROJ_DIR)	
+
+$(CODE_DIR)/aw-res7.o: $(CODE_DIR)/AW-RES7.FOR
+	cd $(CODE_DIR);\
+	gfortran $(GFFLAGS) -c AW-RES7.FOR
+	
+# $(PROJ_DIR)/proc.app: $(CODE_DIR)/proc.o $(CODE_DIR)/Proc.FOR
+# 	gfortran $(GFFLAGS) -c Proc.FOR
+# 	cp $(CODE_DIR)/proc.app $(PROJ_DIR)
 		
 # Delete files resulting from compiling -------------------------------------------------
 .PHONY: clean	
@@ -134,4 +154,5 @@ clean:
 	rm $(OBJECT_FILES)
 	rm $(CODE_DIR)/*.mod 
 	rm $(PROJ_DIR)/main.app
-	
+	rm $(PROJ_DIR)/proc.app	
+	rm $(PROJ_DIR)/aw-res7.app	
