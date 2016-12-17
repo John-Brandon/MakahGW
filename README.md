@@ -9,6 +9,8 @@ This repository is something of a fork off that code (which does not have its ow
 ## Project notes: 
 
 1. Code is being developed to evaluate (via simulation) an alternating season hunt strategy (e.g. odd years hunt in winter, even years in summer, or vice-versa). 
+
+
 2. Population dynamics and availability (to hunters) are modeled for two stocks. The dynamics between stocks are treated independently with one exception. Immigration from the larger stock into the smaller stock is allowed. 
 
 
@@ -18,7 +20,8 @@ This repository is something of a fork off that code (which does not have its ow
 
 ## GNU Make(file): 
 
-1. The original Fortran code files include GUP2.FOR, which simply contains a list of "INCLUDE" statements for each *.FOR file to be compiled into the executable. This approach is the same as concantinating the text in each individual file during compilation **VS**  
+1. The original Fortran code files include GUP2.FOR, which simply contains a list of "INCLUDE" statements for each *.FOR file to be compiled into the executable. This approach is the same as concantinating the text in each individual file during compilation __VS__.  
+
 2. A "MODULAR" approach, wherein, each *.FOR code file is compiled first into an object *.o file. The object files are then linked during the step of compiling the executable. 
 
 
