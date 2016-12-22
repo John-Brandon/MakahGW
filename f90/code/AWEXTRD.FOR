@@ -867,22 +867,23 @@ C
 C
 C         Count down from i to zero
 100       IF (I.NE.0) THEN
+
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!      
-						IF(N.EQ.59.AND.IYR.GE.96)THEN
-							PRINT *, ""
-							PRINT *, "1. ABOUT TO CALL RAN1 FROM GAMMAZ"
-							PRINT *, "ISEED", ISEED
-							!PRINT *, "MA", MA
-							PRINT *, "INEXT", INEXT
-							PRINT *, "INEXTP", INEXTP
-						END IF 
+C					IF(N.EQ.59.AND.IYR.GE.96)THEN
+C						PRINT *, ""
+C						PRINT *, "1. ABOUT TO CALL RAN1 FROM GAMMAZ"
+C						PRINT *, "ISEED", ISEED
+C						!PRINT *, "MA", MA
+C						PRINT *, "INEXT", INEXT
+C						PRINT *, "INEXTP", INEXTP
+C					END IF 
       		
             F = RAN1(ISEED,MA,INEXT,INEXTP)
 
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!      
-						IF(N.EQ.59.AND.IYR.GE.96)THEN
-							PRINT *, "1. FINISHED CALL RAN1 FROM GAMMAZ"
-						END IF 
+C					IF(N.EQ.59.AND.IYR.GE.96)THEN
+C						PRINT *, "1. FINISHED CALL RAN1 FROM GAMMAZ"
+C					END IF 
       		            
             IF (F.LE.0.D0) THEN
               WRITE(*,*) 'WARNING F=0 in GAMMAZ',F
@@ -897,17 +898,17 @@ C
 C       Usually this is the case (unless x is an integer)
         IF (X.GT.FN) THEN
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!      
-		      IF(N.EQ.60.AND.IYR.GE.96)THEN
-		      	PRINT *, ""
-						PRINT *, "2. ABOUT TO CALL RAN1 FROM GAMMAZ"
-      		END IF 
+C	      IF(N.EQ.60.AND.IYR.GE.96)THEN
+C	      	PRINT *, ""
+C					PRINT *, "2. ABOUT TO CALL RAN1 FROM GAMMAZ"
+C     		END IF 
       		
           F = RAN1(ISEED,MA,INEXT,INEXTP)
           
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!      
-		      IF(N.EQ.60.AND.IYR.GE.96)THEN
-						PRINT *, "2. FINISHED CALL RAN1 FROM GAMMAZ"
-      		END IF 
+C	      IF(N.EQ.60.AND.IYR.GE.96)THEN
+C					PRINT *, "2. FINISHED CALL RAN1 FROM GAMMAZ"
+C     		END IF 
       		          
           IF (F.LE.0.D0) THEN
             WRITE(*,*) 'WARNING F=0 in GAMMAZ',F
