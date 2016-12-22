@@ -309,12 +309,12 @@ C
 C ----------------------------------------------------------------------      
 C     Debugging [JRB] Can't find PARFIL
 C ----------------------------------------------------------------------      
-      print *, "Hello from line 312: Initialisation"
-      print *, "REF: ", REF
-      print *, "DESC: ", DESC
-      print *, "PARFIL: ", PARFIL
-      print *, "MATFIL: ", MATFIL  
-      print *, ""
+C     print *, "Hello from line 312: Initialisation"     
+C     print *, "REF: ", REF
+C     print *, "DESC: ", DESC
+C     print *, "PARFIL: ", PARFIL
+C     print *, "MATFIL: ", MATFIL  
+C     print *, ""
 C      
 C     Read management type & whether conditioning. Allocate output file.
 C     If MANAGE=Z all catches set to zero & results output to AW-RESZ
@@ -524,19 +524,19 @@ C
 C Loop over years for this trial ----------------------------------------------------------					
         DO 100 IYR = 0,NYEAR-1
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					if (N.eq.60.and.IYR.ge.96) then	
-						print *, "---------------------------------------------"				
-						print *, "Starting new year", IYR
-						print *, "Trial number", N
-					end if
+C				if (N.eq.60.and.IYR.ge.96) then	
+C					print *, "---------------------------------------------"				
+C					print *, "Starting new year", IYR
+C					print *, "Trial number", N
+C				end if
 					
 C         Test if a new quota is needed for the northern area, NEWQ, is to be set 
 C         this year for use in IYRQ (if NEED(1,IYR+3)>0, IYR=0 or after strategic surveys) 
 
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					if (N.eq.60.and.IYR.ge.96) then	
-						print *, "Calling SLC to set block quota for North"
-					end if
+C				if (N.eq.60.and.IYR.ge.96) then	
+C					print *, "Calling SLC to set block quota for North"
+C				end if
 					
           IF (NEED(1,IYR+3).GT.0.D0 .OR. IYR.EQ.0) THEN
             IYRQ = 0
@@ -571,9 +571,9 @@ C
 C           Call SLC (subsistence limit calculation) to set the block quota.
 
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-						if (N.eq.60.and.IYR.ge.96) then	
-							print *, "Calling SLC to set block quota for PCFG"
-						end if
+C					if (N.eq.60.and.IYR.ge.96) then	
+C						print *, "Calling SLC to set block quota for PCFG"
+C					end if
 					
             IF (MANAGE.EQ.' ') THEN
                NVAL = NEEDI / DBLE(IQUOTA(2))
@@ -597,9 +597,9 @@ C             Ensure 0 <= NEWQ <= NEED
 C
 C         DATGEN sets abundance estimate and CV in IYR if ISIGHT=1: Section B1
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					if (N.eq.60.and.IYR.ge.96) then	
-						print *, "Calling DATGEN sets abundance estimate and CV"
-					end if
+C				if (N.eq.60.and.IYR.ge.96) then	
+C					print *, "Calling DATGEN sets abundance estimate and CV"
+C				end if
 					
           DO 1099 IS = 1,2
            CALL DATGEN (SIGHT(IS,IYR),CVX(IS,IYR),0,
@@ -608,9 +608,9 @@ C         DATGEN sets abundance estimate and CV in IYR if ISIGHT=1: Section B1
 1099      CONTINUE     
 
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					if (N.eq.60.and.IYR.ge.96) then	
-						print *, "DATGEN call completed"
-					end if
+C				if (N.eq.60.and.IYR.ge.96) then	
+C					print *, "DATGEN call completed"
+C				end if
 					
 C         If NEED>0 the new quota will be applied this year for IQUOTA years
           IF (NEED(1,IYR).GT.0D0) THEN
@@ -709,17 +709,17 @@ C
 C         Harvest continues - strike a whale and decide if it PCFG
 
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					if (N.eq.60.and.IYR.ge.96) then
-					  print *, ""
-						print *, "Trial 60, IYR: ", IYR					
-						print *, "Strike a whale and decide if it's PCFG"
-						!print *, "ISEED5", ISEED5
-						print *, "INEXT5", INEXT5
-						print *, "INEXTP5", INEXTP5					
-						print *, "Prior number of strikes", Strikes(IYR)
-						print *, "PropPCFG", PropPCFG
-						print *, ""						
-					end if
+C				if (N.eq.60.and.IYR.ge.96) then
+C				  print *, ""
+C					print *, "Trial 60, IYR: ", IYR					
+C					print *, "Strike a whale and decide if it's PCFG"
+C					!print *, "ISEED5", ISEED5
+C					print *, "INEXT5", INEXT5
+C					print *, "INEXTP5", INEXTP5					
+C					print *, "Prior number of strikes", Strikes(IYR)
+C					print *, "PropPCFG", PropPCFG
+C					print *, ""						
+C				end if
 					
           RAND = RAN1(ISEED5,MA5,INEXT5,INEXTP5)
           
@@ -735,13 +735,13 @@ C
 C         Decide if the whale was struck and lost
 
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					if (N.eq.60.and.IYR.ge.96) then
-						print *, "Checking if struck or lost"
-						print *, "INEXT5", INEXT5
-						print *, "INEXTP5", INEXTP5					
-						print *, "RAND", RAND
-						print *, ""						
-					end if
+C				if (N.eq.60.and.IYR.ge.96) then
+C					print *, "Checking if struck or lost"
+C					print *, "INEXT5", INEXT5
+C					print *, "INEXTP5", INEXTP5					
+C					print *, "RAND", RAND
+C					print *, ""						
+C				end if
 										
           RAND = RAN1(ISEED5,MA5,INEXT5,INEXTP5)
 					          
@@ -780,15 +780,15 @@ C          Landed - now match against catalogue
 C
 C          Is Detected
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					if (N.eq.60.and.IYR.ge.96) then
-							print *, "Checking if detected"
-							print *, "ISEED5", ISEED5
-							!print *, "SIZE(MA5)", SIZE(MA5)
-							!print *, "MA5", MA5
-							print *, "INEXT5", INEXT5
-							print *, "INEXTP5", INEXTP5					
-							print *, ""						
-						end if
+C				if (N.eq.60.and.IYR.ge.96) then
+C						print *, "Checking if detected"
+C						print *, "ISEED5", ISEED5
+C						!print *, "SIZE(MA5)", SIZE(MA5)
+C						!print *, "MA5", MA5
+C						print *, "INEXT5", INEXT5
+C						print *, "INEXTP5", INEXTP5					
+C						print *, ""						
+C					end if
 
            RAND = RAN1(ISEED5,MA5,INEXT5,INEXTP5)
            IF (RAND.LT.ProbDetect) 
@@ -797,20 +797,20 @@ C
           ENDIF
           
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					if (N.eq.60.and.IYR.ge.96) then
-							print *, "Strike algorithm complete for this instance"
-							print *, "INEXT5", INEXT5
-							print *, "INEXTP5", INEXTP5					
-							print *, "Strikes taken so far", Strikes(IYR)						
-						end if          
+C				if (N.eq.60.and.IYR.ge.96) then
+C						print *, "Strike algorithm complete for this instance"
+C						print *, "INEXT5", INEXT5
+C						print *, "INEXTP5", INEXTP5					
+C						print *, "Strikes taken so far", Strikes(IYR)						
+C					end if          
 C          
           GOTO 556  ! Strike taken, loop to next potential strike 
 555       CONTINUE  ! Limit reached, proceed with accounting etc.        
 	
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					if (N.eq.60.and.IYR.ge.96) then
-						print *, "Limit reached, proceeding with book-keeping"
-					end if
+C				if (N.eq.60.and.IYR.ge.96) then
+C					print *, "Limit reached, proceeding with book-keeping"
+C				end if
 C
 C         Record catches (they are taken in PCFG Area in Dec-May)
           CATM(2,IYR) = (CATPCFG+CATNORTH) * CRATIO(2)
@@ -829,30 +829,33 @@ C         If quota CATCHQ > recruited population then it is reset in STKUPA
           DO 52 IS = 1,2
            CALL STKUPA (IYR,CATCHM(IS,IYR),CATCHF(IS,IYR),OK,IS,IYRMAN)
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-						if (N.eq.60.and.IYR.ge.96) then					
-							print *, "Finished calling STKUPA(), IS = ", IS
-						end if                       
+C					if (N.eq.60.and.IYR.ge.96) then					
+C						print *, "Finished calling STKUPA(), IS = ", IS
+C					end if 
+						                      
 52        CONTINUE           
 
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					if (N.eq.60.and.IYR.ge.96) then
-						print *, ""					
-						print *, "About to call ComputePSURVObs()"
-					end if  
+C				if (N.eq.60.and.IYR.ge.96) then
+C					print *, ""					
+C					print *, "About to call ComputePSURVObs()"
+C				end if  
+
           CALL ComputePSURVObs(IYR+1,FracObs)
+          
 C
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					if (N.eq.60.and.IYR.ge.96) then					
-						print *, "Looping to next year"
-						print *, "Current Year", IYR
-					end if  
+C				if (N.eq.60.and.IYR.ge.96) then					
+C					print *, "Looping to next year"
+C					print *, "Current Year", IYR
+C				end if  
 					
 100      CONTINUE  ! Loop to next year for this trial ---------------------------					
 				
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				if (N.eq.60) then 
-					print *, "Finished looping over years for this trial", N
-				end if
+C			if (N.eq.60) then 
+C				print *, "Finished looping over years for this trial", N
+C			end if
 								
 C       Call REPORT to print out PMATF & CATCHM in year IYR
         CALL REPORT (IOUT,NYEAR,SIGHT,CVX,ISUR1,CATM,CATF,IYRMAN)
@@ -1432,39 +1435,42 @@ C          (if MEAN = 0,  XNORM (SIG,0) = SIG * XNORM (1,0) )
       EPS = SIG(IS) * XNORM (1.D0,0.D0,ISEED1,MA1,INEXT1,INXTP1)
 
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!      
-      IF(N.EQ.60.AND.IYR.GE.96)THEN
-      	PRINT *,""      
-				PRINT *, "ABOUT TO CALL FIRST RAN1()", N, IYR
-      END IF            
+C     IF(N.EQ.60.AND.IYR.GE.96)THEN
+C     	PRINT *,""      
+C			PRINT *, "ABOUT TO CALL FIRST RAN1()", N, IYR
+C     END IF            
       
       RANNO = RAN1(ISEED1,MA1,INEXT1,INXTP1)
+      
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!            
-      IF(N.EQ.60.AND.IYR.GE.96)THEN
-      	PRINT *, "FINISHED FIRST RAN1() CALL"
-      	PRINT *, "SETDAT", SETDAT
-      	PRINT *, "ISEED1", ISEED1
-      	PRINT *, "INEXT1", INEXT1
-      	PRINT *, "INXTP1", INXTP1      
-      END IF            	
+C     IF(N.EQ.60.AND.IYR.GE.96)THEN
+C     	PRINT *, "FINISHED FIRST RAN1() CALL"
+C     	PRINT *, "SETDAT", SETDAT
+C     	PRINT *, "ISEED1", ISEED1
+C     	PRINT *, "INEXT1", INEXT1
+C     	PRINT *, "INXTP1", INXTP1      
+C     END IF            	
       
       EPS2 = SDB(IS) * XNORM (1.D0,0.D0,ISEED1,MA1,INEXT1,INXTP1)
       BIASY = BIASB(IS)*EXP(EPS2-SDB(IS)**2.0/2.0)
+      
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!      
-      IF(N.EQ.60.AND.IYR.GE.96)THEN
-      	PRINT *,""
-				PRINT *, "ABOUT TO CALL SECOND RAN1()", N, IYR
-      END IF                  
+C     IF(N.EQ.60.AND.IYR.GE.96)THEN
+C     	PRINT *,""
+C			PRINT *, "ABOUT TO CALL SECOND RAN1()", N, IYR
+C     END IF                  
       
       ISEED  = INT(-RAN1(ISEED2,MA2,INEXT2,INXTP2)*100000.D0)
       
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!            
-      IF(N.EQ.60.AND.IYR.GE.96)THEN
-      	PRINT *, "FINISHED SECOND RAN1() CALL"
-      	PRINT *, "SETDAT", SETDAT
-      	PRINT *, "ISEED1", ISEED1
-      	PRINT *, "INEXT1", INEXT1
-      	PRINT *, "INXTP1", INXTP1      
-      END IF                  
+C     IF(N.EQ.60.AND.IYR.GE.96)THEN
+C     	PRINT *, "FINISHED SECOND RAN1() CALL"
+C     	PRINT *, "SETDAT", SETDAT
+C     	PRINT *, "ISEED1", ISEED1
+C     	PRINT *, "INEXT1", INEXT1
+C     	PRINT *, "INXTP1", INXTP1      
+C     END IF                  
+
 C
 C     Set abundance estimate SIGHT & CVX if a survey is done this year.
 C     Note: if ISGHT=0 then SIGHT & CVX were set =-1 in RESET
@@ -1488,16 +1494,16 @@ C         CHISQ= random no from chi square distribution (DOF=deg.of freedom)
 C         CVEST**2 = THTASQ(ASQ + BSQ/(W*BETASQ))                       {Eqn B1.7}
 
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!      
-		      IF(N.EQ.60.AND.IYR.GE.96)THEN
-						PRINT *, "ABOUT TO CALL GAMMAZ"
-      		END IF 
+C				IF(N.EQ.60.AND.IYR.GE.96)THEN
+C					PRINT *, "ABOUT TO CALL GAMMAZ"
+C				END IF 
       		
    10     CHISQ = GAMMAZ (DOF, SQRT(DOF+DOF), ISEED, N, IYR) ! DOF = mean; sqrt(2*DOF) = sd
    
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!      
-		      IF(N.EQ.60.AND.IYR.GE.96)THEN
-						PRINT *, "EXITING GAMMAZ"
-      		END IF    
+C				IF(N.EQ.60.AND.IYR.GE.96)THEN
+C					PRINT *, "EXITING GAMMAZ"
+C				END IF    
       		
           ECV2 = ACON(IS) + BCON(IS)/W                                  {Eqn B1.7}
           SIG2 = LOG(1.D0 + ECV2)                                       {Eqn B1.6}
@@ -1514,9 +1520,9 @@ C       Deterministic trial                                             {Eqns B1
       ENDIF
       
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!      
-      IF(N.EQ.60.AND.IYR.GE.96)THEN
-				PRINT *, "EXITING DATGEN"
-      END IF 
+C     IF(N.EQ.60.AND.IYR.GE.96)THEN
+C 			PRINT *, "EXITING DATGEN"
+C     END IF 
             
       RETURN
       END
@@ -1926,6 +1932,7 @@ C
 C     Find the Incidental catch
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !			if(IYR.eq.69) print *, "CALLING GETINCIDENTAL"
+
       CALL GETINCIDENTAL(IYR,IS,IYRMAN)
 C
 C     Find the immigration
