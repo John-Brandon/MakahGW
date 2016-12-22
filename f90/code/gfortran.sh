@@ -58,4 +58,6 @@ gfortran F2-gup2.o -w -o main;
 
 # gfortran F2-gup2.for Proc.FOR GUP2.FOR Jbslc.for Dmslc.for AWEXTRD.FOR F2TST9.FOR AW-RES7.FOR AW-RES7.FOR MATRIX.FOR COMMON.FOR -o main
 
+# gfortran -fbounds-check -w -o main COMMON.FOR MATRIX.FOR F2TST9.FOR AWEXTRD.FOR Dmslc.for Jbslc.for GUP2.FOR
+
 exit;
