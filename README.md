@@ -2,9 +2,9 @@
 
 Management Strategy Evaluation of alternating seasonal hunts for gray whales. 
 
-Original Fortran source code provided by Andre E. Punt (Univ. of Washington). That code was used by the Aboriginal Whaling Management Procedure Working Group, for the Gray Whale Implementation Review at the 2012 meeting of the Scientific Committee of the International Whaling Commission. 
+Original Fortran source code provided by Andre E. Punt (Univ. of Washington). That version of the code was used by the Aboriginal Whaling Management Procedure Working Group, for the Gray Whale Implementation Review, at the 2012 meeting of the Scientific Committee of the International Whaling Commission. 
 
-This repository is something of a fork off that code (which does not have its own repository at present). 
+This repository is essentially a fork off the 2012 version of the code (which does not have its own repository at present). This fork includes some independent developments and implements an alternative Strike Limit Control rule.   
 
 ## Project notes: 
 
