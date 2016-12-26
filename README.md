@@ -10,8 +10,9 @@ This repository is essentially a fork off the 2012 version of the code (which do
 
 1. Code is being developed to evaluate (via simulation) an alternating season hunt strategy (e.g. odd years hunt in winter, even years in summer, or vice-versa). 
 
+2. Results from available code and 2012 runs have been checked and are equal.
 
-2. Population dynamics and availability (to hunters) are modeled for two stocks. The dynamics between stocks are treated independently with one exception. Immigration from the larger stock into the smaller stock is allowed. 
+3. Population dynamics and availability (to hunters) are modeled for two stocks. The dynamics between stocks are treated independently with one exception. Immigration from the larger stock into the smaller stock is allowed. 
 
 
 ## Shell scripting: 
