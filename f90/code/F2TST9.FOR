@@ -399,8 +399,8 @@ C READ CONDITIONING RESULTS --------------------------------------------
 C
 C     Otherwise not a conditioning run: read parameter file name & parameters
 			
-			print *, "Attempting to open PARFIL"
-			print *, "PARFIL =", PARFIL
+      print *, "Attempting to open PARFIL"
+	  print *, "PARFIL =", PARFIL
 			
       OPEN (IN4,FILE=PARFIL,STATUS='OLD')
       READ (IN4,*)
@@ -427,8 +427,8 @@ C
 C TRIALS BEGIN ---------------------------------------------------------
 C
       DO 200 N = 1,NTRIAL
-      	! DEBUGGING JRB
-				! print *, "Starting Trial Number", N      						
+        ! DEBUGGING JRB
+		! print *, "Starting Trial Number", N      						
 				
 C
 C       Reset parameters and reseed the random number generators
@@ -493,15 +493,16 @@ C       Advance population to IYR=0
 				
 C       Check that target was achieved and print out new parameters
         IF (ABS(PHIT(1)-PTARGN(1,N)).GT.8.D0) THEN
-					PRINT *, ""        
+			PRINT *, ""        
         	PRINT *, "Trial Number: ", N
-					WRITE(*,*) ' Target popln 1 not hit',PHIT(1),PTARGN(1,N)
-				END IF	
+			WRITE(*,*) ' Target popln 1 not hit',PHIT(1),PTARGN(1,N)
+		END IF	
+        
         IF (ABS(PHIT(2)-PTARGN(2,N)).GT.8.D0) THEN
-					PRINT *, ""        
+			PRINT *, ""        
 	        PRINT *, "Trial Number: ", N
-					WRITE(*,*) ' Target popln 2 not hit',PHIT(2),PTARGN(2,N)
-     		END IF
+			WRITE(*,*) ' Target popln 2 not hit',PHIT(2),PTARGN(2,N)
+     	END IF
      
 ! DEBUGGING JRB
 !				print *, "Checking Completed: Population Target"
@@ -530,17 +531,19 @@ C					print *, "Starting new year", IYR
 C					print *, "Trial number", N
 C				end if
 					
-C         Test if a new quota is needed for the northern area, NEWQ, is to be set 
-C         this year for use in IYRQ (if NEED(1,IYR+3)>0, IYR=0 or after strategic surveys) 
-
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 C				if (N.eq.60.and.IYR.ge.96) then	
 C					print *, "Calling SLC to set block quota for North"
 C				end if
 					
+C ----------------------------------------------------------------------------------------					
+C         Test if a new quota is needed for the northern area, NEWQ, is to be set 
+C         this year for use in IYRQ (if NEED(1,IYR+3)>0, IYR=0 or after strategic surveys) 					
           IF (NEED(1,IYR+3).GT.0.D0 .OR. IYR.EQ.0) THEN
             IYRQ = 0
+            
             IF (NEED(1,IYR+3).GT.0.D0) IYRQ = IYR+3
+            
             NEEDI = NEED(1,IYRQ)
 C
 C           Call SLC (subsistence limit calculation) to set the block quota.
@@ -562,19 +565,23 @@ C            Ensure 0 <= NEWQ <= NEED
             ENDIF
           ENDIF
 				
+C ----------------------------------------------------------------------------------------				
 C         Test if a new quota is needed for the PFCG area, NEWQ2, is to be set 
 C         this year for use in IYRQ (if NEED(2,IYR)>0, IYR=0) 
           IF (NEED(2,IYR).GT.0.D0 .OR. IYR.EQ.0) THEN
+          
             IF (NEED(2,IYR).GT.0.D0) IYRQ = IYR
+            
             NEEDI = NEED(2,IYRQ)
-C
-C           Call SLC (subsistence limit calculation) to set the block quota.
 
-! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-C					if (N.eq.60.and.IYR.ge.96) then	
-C						print *, "Calling SLC to set block quota for PCFG"
-C					end if
-					
+C
+C           Call SLC (subsistence limit calculation) to set the block quota.	
+! PCFGCASE:
+!		1, 4, or 7] December to April (winter hunt); MonthHarvest = 4
+!		2, 5, or 8] May (summer hunt); MonthHarvest = 5 
+!		21 - 26] MonthHarvest = 99
+!		3, 6, 9, 11] MonthHarvest = 5; PhiFutPCFG = 1.0; DeltaFutPCFG = (200.0/PhiFutPCFG  - 200.0)/20000.0
+				
             IF (MANAGE.EQ.' ') THEN
                NVAL = NEEDI / DBLE(IQUOTA(2))
                CALL SLCPFCG (CATM,CATF,SIGHT,CVX,IYRQ,ICAT1,ISUR1,
@@ -779,38 +786,15 @@ C          Landed - now match against catalogue
            Landed(IYR) = Landed(IYR) + 1
 C
 C          Is Detected
-! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-C				if (N.eq.60.and.IYR.ge.96) then
-C						print *, "Checking if detected"
-C						print *, "ISEED5", ISEED5
-C						!print *, "SIZE(MA5)", SIZE(MA5)
-C						!print *, "MA5", MA5
-C						print *, "INEXT5", INEXT5
-C						print *, "INEXTP5", INEXTP5					
-C						print *, ""						
-C					end if
-
            RAND = RAN1(ISEED5,MA5,INEXT5,INEXTP5)
            IF (RAND.LT.ProbDetect) 
      +       PCFGDesignated(IYR) = PCFGDesignated(IYR) + 1
 C     
-          ENDIF
-          
-! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-C				if (N.eq.60.and.IYR.ge.96) then
-C						print *, "Strike algorithm complete for this instance"
-C						print *, "INEXT5", INEXT5
-C						print *, "INEXTP5", INEXTP5					
-C						print *, "Strikes taken so far", Strikes(IYR)						
-C					end if          
+          ENDIF       
 C          
           GOTO 556  ! Strike taken, loop to next potential strike 
 555       CONTINUE  ! Limit reached, proceed with accounting etc.        
 	
-! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-C				if (N.eq.60.and.IYR.ge.96) then
-C					print *, "Limit reached, proceeding with book-keeping"
-C				end if
 C
 C         Record catches (they are taken in PCFG Area in Dec-May)
           CATM(2,IYR) = (CATPCFG+CATNORTH) * CRATIO(2)
@@ -829,10 +813,15 @@ C         If quota CATCHQ > recruited population then it is reset in STKUPA
           DO 52 IS = 1,2
            CALL STKUPA (IYR,CATCHM(IS,IYR),CATCHF(IS,IYR),OK,IS,IYRMAN)
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-C					if (N.eq.60.and.IYR.ge.96) then					
-C						print *, "Finished calling STKUPA(), IS = ", IS
-C					end if 
-						                      
+					 if (IYR == 1) then
+					 		print *, ""
+					 		print *, "IYR", IYR, "TRIAL", N
+					 		print *, "INCCAT(IS = 1,IYR)", INCCAT(1,IYR)
+ 				 			print *, "INCCAT(IS=2,IYR)", INCCAT(2,IYR)					 		
+					 		print *, "INCCAT(IS = 1:2,IYR)", 
+     +							 		INCCAT(1,IYR) + INCCAT(2,IYR)					 		
+					 end if
+					 						                      
 52        CONTINUE           
 
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -841,27 +830,16 @@ C					print *, ""
 C					print *, "About to call ComputePSURVObs()"
 C				end if  
 
-          CALL ComputePSURVObs(IYR+1,FracObs)
-          
+          CALL ComputePSURVObs(IYR+1,FracObs)         
 C
-! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-C				if (N.eq.60.and.IYR.ge.96) then					
-C					print *, "Looping to next year"
-C					print *, "Current Year", IYR
-C				end if  
 					
-100      CONTINUE  ! Loop to next year for this trial ---------------------------					
-				
-! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-C			if (N.eq.60) then 
-C				print *, "Finished looping over years for this trial", N
-C			end if
+100     CONTINUE  ! Loop to next year (IYR) for this trial ---------------------------					
 								
 C       Call REPORT to print out PMATF & CATCHM in year IYR
         CALL REPORT (IOUT,NYEAR,SIGHT,CVX,ISUR1,CATM,CATF,IYRMAN)
 
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				print *, "Finished with Trial number", N
+C			print *, "Finished with Trial number", N
 				
   200 CONTINUE  ! Loop to next trial ---------------------------					
 
@@ -1778,7 +1756,7 @@ C *********************************************************************
 C     This routine determines the annual incidental catches
 C     I assume a line increase from 1930 to 1999 and constant after 1999
 
-      USE DECL_STKVRS
+      USE DECL_STKVRS  ! Include these variables in the scope of this procedure
       USE DECL_PCFG
       
       DOUBLE PRECISION ALPHA,BETA,FRACT(4),INCCATTEMP,Fract1,Fract2
