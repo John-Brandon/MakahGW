@@ -141,6 +141,15 @@ C --------------------------------------------------------------------
       END MODULE DECL_PCFG
 
 C --------------------------------------------------------------------
+
+      MODULE ALT_PCFG
+! Variables introduced for modeling an alternating season Makah hunt  
+! Added by John Brandon, Winter 2016
+      	LOGICAL winter_season
+      	INTEGER mod_yr  ! modulus(x = 2) of year number: summer v winter season
+      END MODULE ALT_PCFG
+
+C --------------------------------------------------------------------
 C --------------------------------------------------------------------
       
       PROGRAM F2TST
@@ -270,6 +279,7 @@ C
       USE DECL_CONVRS
       USE DECL_PCFG
       USE DECL_DATVRS
+      USE ALT_PCFG  ! Added by JRB. See comments in module.
 C
       COMMON /SIMVRS/MSYLN(2,MXSIM),MSYRN(2,MXSIM),MAT50N(MXSIM),
      +               SURJN(2,MXSIM),SURN(MXSIM),CVADD(2,MXSIM),
@@ -344,6 +354,15 @@ C     Call INIT to read in / set up parameters.
       CALL INIT (CATM,CATF,SIGHT,CVX,NYEAR,IYRMAN,IQUOTA)
 C
 C     Adjust for month
+! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!  Note:
+!  The "MonthHarvest" (i.e. summer or winter) will ultimately depend
+!   on the year (not PCFGCASE per se) for the alternating season option. 
+!  Can leave PCFGCASE = 1 for input files, but will need to revise
+!   code that sets MonthHarvest. 
+!  These revisions will need to be implemented in the loop over years (IYR)
+      IF (PCFGCASE.EQ.1) MonthHarvest = 4
+      
       IF (PCFGCASE.EQ.1.OR.PCFGCASE.EQ.4.OR.PCFGCASE.EQ.7.
      +    OR.PCFGCASE.EQ.10) MonthHarvest = 4
       IF (PCFGCASE.EQ.2.OR.PCFGCASE.EQ.5.OR.PCFGCASE.EQ.8) 
@@ -400,7 +419,7 @@ C
 C     Otherwise not a conditioning run: read parameter file name & parameters
 			
       print *, "Attempting to open PARFIL"
-	  print *, "PARFIL =", PARFIL
+			print *, "PARFIL =", PARFIL
 			
       OPEN (IN4,FILE=PARFIL,STATUS='OLD')
       READ (IN4,*)
@@ -415,20 +434,15 @@ C     Otherwise not a conditioning run: read parameter file name & parameters
       CLOSE (IN4)
 C
 C     Call ISLC to initialise management routine 
-
-! DEBUGGING JRB
-!			print *, "--------------------------------------"
-!			print *, "Calling ISLC, prior to starting Trials"
-!			print *, "--------------------------------------"			 
-
       CALL ISLC(CATM, CATF, SIGHT, CVX,INITYR)
+      
 C
 C
 C TRIALS BEGIN ---------------------------------------------------------
 C
       DO 200 N = 1,NTRIAL
         ! DEBUGGING JRB
-		! print *, "Starting Trial Number", N      						
+				! print *, "Starting Trial Number", N      						
 				
 C
 C       Reset parameters and reseed the random number generators
@@ -452,7 +466,8 @@ C       MSYP2 sets MSYL and MSYR in terms of other population components
         DO 201 IS = 1,2
          CALL MSYPAR(OK,IS)
          CALL MSYP2 (MSYL1,MSYLM,MSYLE,MSYR1,MSYRM,MSYRE,IS)
-201     CONTINUE         
+201     CONTINUE    
+     
         DO 1011 IS = 1,2
          CALL SETKA (KN(IS,N),PN(IS,N),PHIT(IS),OK,IS,IYRMAN)
 1011    CONTINUE         
@@ -461,7 +476,8 @@ C       Compute the expected survey estimates
         CALL ComputePSURVObs(INITYR,FracObs)
         DO 1014 IYR = IYRPRJ,-1
          CALL ComputePSURVObs(IYR,FracObs)
-1014    CONTINUE         
+1014    CONTINUE     
+    
         KNObs(1) = PSurvOBS(1,INITYR)
         KNObs(2) = PSurvOBS(2,INITYR)
 C
@@ -484,7 +500,8 @@ C       the last premanagement survey estimate, SIGHT(-1), & its CV
 C       Advance population to IYR=0
         DO 1012 IS = 1,2
          CALL STKUPA (IYR,CATCHM(IS,IYR),CATCHF(IS,IYR),OK,IS,IYRMAN)
-1012    CONTINUE         
+1012    CONTINUE     
+    
         CALL ComputePSURVObs(0,FracObs)
 
 ! DEBUGGING JRB
@@ -493,16 +510,16 @@ C       Advance population to IYR=0
 				
 C       Check that target was achieved and print out new parameters
         IF (ABS(PHIT(1)-PTARGN(1,N)).GT.8.D0) THEN
-			PRINT *, ""        
+					PRINT *, ""        
         	PRINT *, "Trial Number: ", N
-			WRITE(*,*) ' Target popln 1 not hit',PHIT(1),PTARGN(1,N)
-		END IF	
+					WRITE(*,*) ' Target popln 1 not hit',PHIT(1),PTARGN(1,N)
+				END IF	
         
         IF (ABS(PHIT(2)-PTARGN(2,N)).GT.8.D0) THEN
-			PRINT *, ""        
+					PRINT *, ""        
 	        PRINT *, "Trial Number: ", N
-			WRITE(*,*) ' Target popln 2 not hit',PHIT(2),PTARGN(2,N)
-     	END IF
+					WRITE(*,*) ' Target popln 2 not hit',PHIT(2),PTARGN(2,N)
+     		END IF
      
 ! DEBUGGING JRB
 !				print *, "Checking Completed: Population Target"
@@ -525,16 +542,16 @@ C
 C Loop over years for this trial ----------------------------------------------------------					
         DO 100 IYR = 0,NYEAR-1
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-C				if (N.eq.60.and.IYR.ge.96) then	
-C					print *, "---------------------------------------------"				
-C					print *, "Starting new year", IYR
-C					print *, "Trial number", N
-C				end if
-					
-! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-C				if (N.eq.60.and.IYR.ge.96) then	
-C					print *, "Calling SLC to set block quota for North"
-C				end if
+					mod_yr = mod(IYR, 2)	! Calculate modulus to determine if yr is odd or even
+					if (mod_yr == 0 .and. N == 1) then
+						print *, "-----------------------------------"					
+						print *, "IYR", IYR
+						print *, "hunt season: WINTER" 
+					else if (mod_yr == 1 .and. N == 1) then
+						print *, "-----------------------------------"					
+						print *, "IYR", IYR
+						print *, "hunt season: SUMMER" 
+					end if								
 					
 C ----------------------------------------------------------------------------------------					
 C         Test if a new quota is needed for the northern area, NEWQ, is to be set 
@@ -578,7 +595,7 @@ C
 C           Call SLC (subsistence limit calculation) to set the block quota.	
 ! PCFGCASE:
 !		1, 4, or 7] December to April (winter hunt); MonthHarvest = 4
-!		2, 5, or 8] May (summer hunt); MonthHarvest = 5 
+!		2, 5, or 8] May (summer hunt); MonthHarvest = 5 (assumes 100% of strikes are PCFG)
 !		21 - 26] MonthHarvest = 99
 !		3, 6, 9, 11] MonthHarvest = 5; PhiFutPCFG = 1.0; DeltaFutPCFG = (200.0/PhiFutPCFG  - 200.0)/20000.0
 				
@@ -602,22 +619,12 @@ C             Ensure 0 <= NEWQ <= NEED
             ENDIF
           ENDIF					
 C
-C         DATGEN sets abundance estimate and CV in IYR if ISIGHT=1: Section B1
-! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-C				if (N.eq.60.and.IYR.ge.96) then	
-C					print *, "Calling DATGEN sets abundance estimate and CV"
-C				end if
-					
+C         DATGEN sets abundance estimate and CV in IYR if ISIGHT=1: Section B1				
           DO 1099 IS = 1,2
            CALL DATGEN (SIGHT(IS,IYR),CVX(IS,IYR),0,
      +       PSURVObs(IS,IYR),KNObs(IS),BIAS(IS,IYR),ISIGHT(IS,IYR),
      +       PHIT(IS),IS, N, IYR)
 1099      CONTINUE     
-
-! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-C				if (N.eq.60.and.IYR.ge.96) then	
-C					print *, "DATGEN call completed"
-C				end if
 					
 C         If NEED>0 the new quota will be applied this year for IQUOTA years
           IF (NEED(1,IYR).GT.0D0) THEN
@@ -664,7 +671,7 @@ C         Special feature implement the ABL
      +       (NEXP(2,IYR)+DeltaFutPCFG*NEXP(1,IYR))
           ELSE
            propPCFG = 0
-           GOTO 555
+           GOTO 555  ! Exit looping over strikes
           ENDIF 
 C
 C         Set the various counters to zero
@@ -696,10 +703,12 @@ C         Landing Block quota exceeded?
           DO 557 IYR2 = BlockStart,IYR
            TotalLands = TotalLands + Landed(IYR2)
 557       CONTINUE
+
           IF (TotalLands.EQ.20) THEN
            Reason(IYR) = 5
            GOTO 555  ! Exit looping over strikes
           ENDIF 
+
 C
 C         Stop harvest: landed whales hits 5
           IF (Landed(IYR).EQ.5) THEN
@@ -714,20 +723,6 @@ C         Stop harvest: strike limit has been reached
           ENDIF 
 C
 C         Harvest continues - strike a whale and decide if it PCFG
-
-! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-C				if (N.eq.60.and.IYR.ge.96) then
-C				  print *, ""
-C					print *, "Trial 60, IYR: ", IYR					
-C					print *, "Strike a whale and decide if it's PCFG"
-C					!print *, "ISEED5", ISEED5
-C					print *, "INEXT5", INEXT5
-C					print *, "INEXTP5", INEXTP5					
-C					print *, "Prior number of strikes", Strikes(IYR)
-C					print *, "PropPCFG", PropPCFG
-C					print *, ""						
-C				end if
-					
           RAND = RAN1(ISEED5,MA5,INEXT5,INEXTP5)
           
           IF (RAND.LT.PropPCFG) THEN
@@ -739,17 +734,7 @@ C				end if
           ENDIF
           Strikes(IYR) = Strikes(IYR) + 1
 C
-C         Decide if the whale was struck and lost
-
-! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-C				if (N.eq.60.and.IYR.ge.96) then
-C					print *, "Checking if struck or lost"
-C					print *, "INEXT5", INEXT5
-C					print *, "INEXTP5", INEXTP5					
-C					print *, "RAND", RAND
-C					print *, ""						
-C				end if
-										
+C         Decide if the whale was struck and lost									
           RAND = RAN1(ISEED5,MA5,INEXT5,INEXTP5)
 					          
           IF (RAND.LT.ProbStrk) THEN
@@ -813,23 +798,18 @@ C         If quota CATCHQ > recruited population then it is reset in STKUPA
           DO 52 IS = 1,2
            CALL STKUPA (IYR,CATCHM(IS,IYR),CATCHF(IS,IYR),OK,IS,IYRMAN)
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					 if (IYR == 1) then
-					 		print *, ""
-					 		print *, "IYR", IYR, "TRIAL", N
-					 		print *, "INCCAT(IS = 1,IYR)", INCCAT(1,IYR)
- 				 			print *, "INCCAT(IS=2,IYR)", INCCAT(2,IYR)					 		
-					 		print *, "INCCAT(IS = 1:2,IYR)", 
-     +							 		INCCAT(1,IYR) + INCCAT(2,IYR)					 		
-					 end if
+C				 if (IYR == 1) then
+C				 		print *, ""
+C				 		print *, "IYR", IYR, "TRIAL", N
+C				 		print *, "INCCAT(IS = 1,IYR)", INCCAT(1,IYR)
+C				 			print *, "INCCAT(IS=2,IYR)", INCCAT(2,IYR)					 		
+C				 		print *, "INCCAT(IS = 1:2,IYR)", 
+C    +							 		INCCAT(1,IYR) + INCCAT(2,IYR)					 		
+C				 end if
 					 						                      
 52        CONTINUE           
 
-! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-C				if (N.eq.60.and.IYR.ge.96) then
-C					print *, ""					
-C					print *, "About to call ComputePSURVObs()"
-C				end if  
-
+C
           CALL ComputePSURVObs(IYR+1,FracObs)         
 C
 					
@@ -841,7 +821,7 @@ C       Call REPORT to print out PMATF & CATCHM in year IYR
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 C			print *, "Finished with Trial number", N
 				
-  200 CONTINUE  ! Loop to next trial ---------------------------					
+  200 CONTINUE  ! Loop to next trial (N) ---------------------------					
 
       CLOSE (IOUT)
       CLOSE (1)
