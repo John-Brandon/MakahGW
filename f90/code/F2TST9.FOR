@@ -313,35 +313,36 @@ C
 C INITIALISATION -------------------------------------------------------
 C
       PROG = 'F2TST: V9'
-      
+
+C Print filler lines before next trial (if running a batch)
+			print *, "-----------------------------------------"
+			print *, "--------------------"
+			print *, "------------"                
+			print *, "------"                
+			print *, "--"
+
+C Read input file header.       
       READ (IN,'(T37,A /A/2(/45X,A))') REF,DESC,PARFIL,MATFIL
-      
-C ----------------------------------------------------------------------      
-C     Debugging [JRB] Can't find PARFIL
-C ----------------------------------------------------------------------      
-C     print *, "Hello from line 312: Initialisation"     
-C     print *, "REF: ", REF
-C     print *, "DESC: ", DESC
-C     print *, "PARFIL: ", PARFIL
-C     print *, "MATFIL: ", MATFIL  
-C     print *, ""
+
 C      
 C     Read management type & whether conditioning. Allocate output file.
 C     If MANAGE=Z all catches set to zero & results output to AW-RESZ
 C     If MANAGE=I a zero strike limit is set for both areas & results output to AW-RESI {There are incidental catches}
 C     If MANAGE=C constant strike limit is set = CCONST
-      print *, "About to try to open MANAGE.DAT"
       OPEN (16,FILE='MANAGE.DAT',STATUS='OLD')
       READ (16,'(A1/I1/F4.0/F4.0/I4/I4)') MANAGE, DOCON, 
      +    CCONST1, CCONST2, PCFGCASE
       CLOSE(16) 
 
-      print *, "About to open AW-RES file"
-      print *, "MANAGE", MANAGE
-      print *, "DOCON", DOCON
-      print *, "CCONST1", CCONST1
-      print *, "CCONST2", CCONST2                  
-      print *, "PCFGCASE", PCFGCASE      
+C DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+C     print *, "About to open AW-RES file"
+			print *, ""
+			print *, "CATCH TREATMENT OPTION (MANAGE):  ", MANAGE
+			
+C     print *, "DOCON", DOCON
+C     print *, "CCONST1", CCONST1
+C     print *, "CCONST2", CCONST2                  
+C     print *, "PCFGCASE", PCFGCASE      
          
 			
       OPEN (IOUT,FILE='AW-RES'// MANAGE,STATUS='UNKNOWN')
@@ -349,11 +350,12 @@ C     If MANAGE=C constant strike limit is set = CCONST
 C
 C     Open Catch file (CATCHB.DAT or CATCHG.DAT)
       OPEN (IN3,FILE='CATCH'//REF(1:1)//'.DAT',STATUS='OLD')
-
+			
 C     Call INIT to read in / set up parameters.
       CALL INIT (CATM,CATF,SIGHT,CVX,NYEAR,IYRMAN,IQUOTA)
 C
-C     Adjust for month
+C     Adjust for month -----------------------------------------------------
+
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !  Note:
 !  The "MonthHarvest" (i.e. summer or winter) will ultimately depend
@@ -379,7 +381,7 @@ C
 C     Reset the future reference incidental catch if MANAGE = I
       AVEINCCATF = AVEINCCAT
       IF (MANAGE.EQ."Z") AVEINCCATF = 0
-
+			
 C     Call PNTOUT to copy to output
       CALL PNTOUT (IOUT,NYEAR,IQUOTA,PARFIL,IYRMAN)
 C
@@ -418,8 +420,10 @@ C READ CONDITIONING RESULTS --------------------------------------------
 C
 C     Otherwise not a conditioning run: read parameter file name & parameters
 			
-      print *, "Attempting to open PARFIL"
-			print *, "PARFIL =", PARFIL
+C DEBUGGING JRB
+			print *, ""
+			print *, "PAR FILE = ", PARFIL
+			print *, ""			
 			
       OPEN (IN4,FILE=PARFIL,STATUS='OLD')
       READ (IN4,*)
@@ -440,9 +444,15 @@ C
 C
 C TRIALS BEGIN ---------------------------------------------------------
 C
+
+! DEBUGGING JRB
+			print *, "Starting Trials"
+			print *, ""
+			
       DO 200 N = 1,NTRIAL
-        ! DEBUGGING JRB
-				! print *, "Starting Trial Number", N      						
+
+C Display progress bar for simulations
+  			call progress_bar(N, NTRIAL)     						
 				
 C
 C       Reset parameters and reseed the random number generators
@@ -503,10 +513,6 @@ C       Advance population to IYR=0
 1012    CONTINUE     
     
         CALL ComputePSURVObs(0,FracObs)
-
-! DEBUGGING JRB
-!				print *, ""
-!				print *, "Checking that target was achieved"
 				
 C       Check that target was achieved and print out new parameters
         IF (ABS(PHIT(1)-PTARGN(1,N)).GT.8.D0) THEN
@@ -520,9 +526,6 @@ C       Check that target was achieved and print out new parameters
 	        PRINT *, "Trial Number: ", N
 					WRITE(*,*) ' Target popln 2 not hit',PHIT(2),PTARGN(2,N)
      		END IF
-     
-! DEBUGGING JRB
-!				print *, "Checking Completed: Population Target"
 				     
         WRITE (IOUT,'(/''Trial:'',I4,A10,4I8 / 12X,
      +   2(''MSY'',3(A,2F8.5,4X)))') N,'Seeds:',
@@ -540,19 +543,9 @@ C       Reinitialise the management routine (if required)
         CALL RSLC (ICAT1,ISUR1,NSIM)
 C					
 C Loop over years for this trial ----------------------------------------------------------					
-        DO 100 IYR = 0,NYEAR-1
-! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					mod_yr = mod(IYR, 2)	! Calculate modulus to determine if yr is odd or even
-					if (mod_yr == 0 .and. N == 1) then
-						print *, "-----------------------------------"					
-						print *, "IYR", IYR
-						print *, "hunt season: WINTER" 
-					else if (mod_yr == 1 .and. N == 1) then
-						print *, "-----------------------------------"					
-						print *, "IYR", IYR
-						print *, "hunt season: SUMMER" 
-					end if								
+        DO 100 IYR = 0,NYEAR-1		
 					
+! NORTH AREA QUOTA					
 C ----------------------------------------------------------------------------------------					
 C         Test if a new quota is needed for the northern area, NEWQ, is to be set 
 C         this year for use in IYRQ (if NEED(1,IYR+3)>0, IYR=0 or after strategic surveys) 					
@@ -581,7 +574,8 @@ C            Ensure 0 <= NEWQ <= NEED
               STOP 'Unknown management option - not blank, Z or H'
             ENDIF
           ENDIF
-				
+
+! PCFG QUOTA				
 C ----------------------------------------------------------------------------------------				
 C         Test if a new quota is needed for the PFCG area, NEWQ2, is to be set 
 C         this year for use in IYRQ (if NEED(2,IYR)>0, IYR=0) 
@@ -601,10 +595,18 @@ C           Call SLC (subsistence limit calculation) to set the block quota.
 				
             IF (MANAGE.EQ.' ') THEN
                NVAL = NEEDI / DBLE(IQUOTA(2))
+! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! Need to replace SLCPFCG code with procedures that return
+! 	strike limit conditional on whether it is a winter or summer hunt year
+! The SLCPFCG procedure is defined in GUP2.FOR 
+               
                CALL SLCPFCG (CATM,CATF,SIGHT,CVX,IYRQ,ICAT1,ISUR1,
      +               NEEDI, NEWQ2,NSIM,IQUOTA(1),ABLV)
+     
 C             Ensure 0 <= NEWQ <= NEED
               ABLV = INT(MAX(0.D0, MIN(ABLV,NVAL)))
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+              
               IF (PCFGCASE.GE.4.AND.PCFGCASE.LE.6) ABLV = 1
               IF (PCFGCASE.GE.7.AND.PCFGCASE.LE.9) ABLV = 2
               IF (PCFGCASE.GE.10.AND.PCFGCASE.LT.20) ABLV = 100
@@ -625,7 +627,8 @@ C         DATGEN sets abundance estimate and CV in IYR if ISIGHT=1: Section B1
      +       PSURVObs(IS,IYR),KNObs(IS),BIAS(IS,IYR),ISIGHT(IS,IYR),
      +       PHIT(IS),IS, N, IYR)
 1099      CONTINUE     
-					
+
+! NORTH: Allocate quota over time block 					
 C         If NEED>0 the new quota will be applied this year for IQUOTA years
           IF (NEED(1,IYR).GT.0D0) THEN
            CATCHQ = NEWQ
@@ -637,7 +640,8 @@ C          Store values for next IQUOTA(1) years
             CATCHF(1,I) = CATF(1,I)
    50      CONTINUE
           ENDIF
-					
+
+! PCFG: Allocate quota over time block					
 C         If NEED>0 the new quota will be applied this year for IQUOTA(2) years
           IF (NEED(2,IYR).GT.0D0) THEN
            LASTPCFGNEED = NINT(NEED(2,IYR)/FLOAT(IQUOTA(2)))
@@ -666,9 +670,12 @@ C         Specify the probability of false positives.
      +     IYR*(ProbFalsePos2-ProbFalsePos1)/99.0d0
 C
 C         Special feature implement the ABL
-          IF (NEXP(2,IYR)+DeltaFutPCFG*NEXP(1,IYR).GT.0) THEN
+! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! NEXP looks approximately equal to 1+ stock abundance (see file = AW-RES)
+! What is this? Catching PCFG extinctions?
+          IF (NEXP(2,IYR) + DeltaFutPCFG * NEXP(1,IYR).GT.0) THEN
            PropPCFG = NEXP(2,IYR) / 
-     +       (NEXP(2,IYR)+DeltaFutPCFG*NEXP(1,IYR))
+     +       (NEXP(2,IYR) + DeltaFutPCFG * NEXP(1,IYR))
           ELSE
            propPCFG = 0
            GOTO 555  ! Exit looping over strikes
@@ -682,8 +689,27 @@ C         Set the various counters to zero
           StruckLost(IYR) = 0
           PCFGDesignated(IYR) = 0
           
+! Determine season for Makah hunt and set strike limit parameters accordingly           
+! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					mod_yr = mod(IYR, 2)	! Calculate modulus to determine if yr is odd or even
+					IF (mod_yr == 0 .and. N == 1) THEN
+					! Even years (incl 0) have winter hunt season
+						MonthHarvest = 4
+C					print *, "-----------------------------------"					
+C					print *, "IYR", IYR
+C					print *, "hunt season: WINTER" 
+					ELSE IF (mod_yr == 1 .and. N == 1) THEN
+					! Odd years have summer hunt season					
+						MonthHarvest = 5					
+C					print *, "-----------------------------------"					
+C					print *, "IYR", IYR
+C					print *, "hunt season: SUMMER" 
+					END IF					
+! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+          
 556       CONTINUE      ! -----------------------------------------------------
-!  Start looping over strikes
+
+!  Check limits before a strike is allowed 
 C
 C         Stop harvest: struck and lost hits 3
           IF (StruckLost(IYR).EQ.3) THEN
@@ -722,6 +748,7 @@ C         Stop harvest: strike limit has been reached
            GOTO 555  ! Exit looping over strikes
           ENDIF 
 C
+! Limits have been checked ----------------------------------------------------
 C         Harvest continues - strike a whale and decide if it PCFG
           RAND = RAN1(ISEED5,MA5,INEXT5,INEXTP5)
           
@@ -744,7 +771,7 @@ C         Decide if the whale was struck and lost
            StruckAndLost = .FALSE.
           ENDIF
 C
-C         Rules differs depend on whether the animals was struck and lost
+C         Rules differs depend on whether the animals was struck and lost -------
           IF (StruckAndLost) THEN
 C
 C          Struck & Lost in December - April [do nothing]
@@ -767,10 +794,10 @@ C            IF (StruckLost(Iyr).GT.NumBeforeMay) THEN
 C
           ELSE
 C
-C          Landed - now match against catalogue
+C          Landed - now match against catalogue ---------------------------------
            Landed(IYR) = Landed(IYR) + 1
 C
-C          Is Detected
+C          Is Detected?
            RAND = RAN1(ISEED5,MA5,INEXT5,INEXTP5)
            IF (RAND.LT.ProbDetect) 
      +       PCFGDesignated(IYR) = PCFGDesignated(IYR) + 1
@@ -797,16 +824,6 @@ C         Advance stock to next year, ie remove catch & set PMATF(IYR+1).
 C         If quota CATCHQ > recruited population then it is reset in STKUPA
           DO 52 IS = 1,2
            CALL STKUPA (IYR,CATCHM(IS,IYR),CATCHF(IS,IYR),OK,IS,IYRMAN)
-! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-C				 if (IYR == 1) then
-C				 		print *, ""
-C				 		print *, "IYR", IYR, "TRIAL", N
-C				 		print *, "INCCAT(IS = 1,IYR)", INCCAT(1,IYR)
-C				 			print *, "INCCAT(IS=2,IYR)", INCCAT(2,IYR)					 		
-C				 		print *, "INCCAT(IS = 1:2,IYR)", 
-C    +							 		INCCAT(1,IYR) + INCCAT(2,IYR)					 		
-C				 end if
-					 						                      
 52        CONTINUE           
 
 C
@@ -817,11 +834,17 @@ C
 								
 C       Call REPORT to print out PMATF & CATCHM in year IYR
         CALL REPORT (IOUT,NYEAR,SIGHT,CVX,ISUR1,CATM,CATF,IYRMAN)
-
-! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-C			print *, "Finished with Trial number", N
 				
   200 CONTINUE  ! Loop to next trial (N) ---------------------------					
+
+C Print filler lines before next trial (if running a batch)
+			print *, ""
+			print *, ""
+			print *, "--"
+			print *, "------"
+			print *, "------------"
+			print *, "--------------------"
+			print *, "-----------------------------------------"
 
       CLOSE (IOUT)
       CLOSE (1)
@@ -829,6 +852,67 @@ C			print *, "Finished with Trial number", N
 
       STOP
       END
+
+C ----------------------------------------------------------------------
+C ----------------------------------------------------------------------
+			subroutine progress_bar(iteration, maximum)
+!
+! Prints progress bar.
+!
+! Args: 
+!     iteration - iteration number
+!     maximum - total iterations
+!
+! (gfortran needs compilation parameter: -fbackslash)
+!
+! Maciej Żok, 2010 MIT License
+! https://github.com/macie/fortran-libs
+! 
+! Modified by John Brandon in attempt to be more flexible, and extend progress
+!  bar across more columns on screen
+!
+        implicit none
+        integer :: iteration, maximum
+        integer :: counter
+        integer :: step, done
+! introduced variables to make algorithm more flexible (e.g. previously hard-coded div = 10.0) JRB        
+        integer :: idiv, ibin
+        real :: div, bin  
+
+				div = 5.d0
+				idiv = nint(div)				
+				bin = 20.d0
+				ibin = nint(bin)
+				
+        step = nint(iteration * 100 / (1.0 * maximum))
+        done = floor(step / div)  ! mark every 5% (done ranges from 1-20)
+
+        do counter = 1, 100                    ! clear whole line - 100 chars
+            write(6,'(a)',advance='no') '\b'  ! (\b - backslash)
+        end do
+
+        write(6,'(a)',advance='no') ' -> In progress... ['
+
+        if (done .LE. 0) then
+            do counter = 1, ibin
+                write(6,'(a)',advance='no') '='
+            end do
+        else if ((done .GT. 0) .and. (done .LT. ibin)) then
+            do counter = 1, done
+                write(6,'(a)',advance='no') '#'
+            end do
+            do counter = done+1, ibin
+                write(6,'(a)',advance='no') '='
+            end do 
+        else
+            do counter = 1, ibin
+                write(6,'(a)',advance='no') '#'
+            end do
+        end if
+        write(6,'(a)',advance='no') '] '
+        write(6,'(I3.1)',advance='no') step        
+        write(6,'(a)',advance='no') '%'
+			end subroutine progress_bar
 
 C ----------------------------------------------------------------------
 C ----------------------------------------------------------------------
@@ -1023,12 +1107,16 @@ C     Initialise SIGHT & CVX.
    40 CONTINUE
 
       READ (IN3,'(// I2 //)') NSURV
-      WRITE(*,*) "HERE",NSURV
+      
       DO 45 IYR = ISUR1,ISUR1+NSURV-1
         READ (IN3,*) I,SIGHT(1,IYR),CVX(1,IYR)
         IF (I-IYRMAN.NE.IYR) STOP 'ERROR(2) READING SURVEY YEAR'
    45 CONTINUE
-      WRITE(*,*) I,IGSURV+IYRMAN
+   
+C DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   
+C Commented out this write statement. Doesn't seem to add anything. 
+C      WRITE(*,*) I,IGSURV+IYRMAN
+      
       IF (I.GE.IGSURV+IYRMAN) STOP 'ERROR(4a) IN SURVEY YEAR'
       READ (IN3,'(// I2 //)') NSURV
       DO 46 IYR = ISUR1,ISUR1+NSURV-1
@@ -1036,7 +1124,11 @@ C     Initialise SIGHT & CVX.
         IF (I-IYRMAN.NE.IYR) STOP 'ERROR(2) READING SURVEY YEAR'
    46 CONTINUE
       CLOSE(IN3)
-      WRITE(*,*) I,IGSURV
+      
+C DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!         
+C Commented out this write statement. Doesn't seem to add anything. 
+C      WRITE(*,*) I,IGSURV
+      
       IF (I.GE.IGSURV+IYRMAN) STOP 'ERROR(4b) IN SURVEY YEAR'
 C
 C *** Initialise other variables:   ------------------------------------
@@ -1100,7 +1192,10 @@ C       BIAS(25) in yr 25.  Constant from year 25. See Div
 C       Cyclic bias.
         CALL TIMDEP(BIAS,BIAS(IS,0),0.d0,I1SYR,ICEND,0,NYEAR-1,3,IS)
        ENDIF
-       PRINT '('' Bias: '',F7.3 / 10(10F7.3 /) )',(BIAS(IS,I),I=-1,100)
+
+C DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!        
+C       PRINT '('' Bias: '',F7.3 / 10(10F7.3 /) )',(BIAS(IS,I),I=-1,100)
+
   80  CONTINUE
 C
       RETURN
