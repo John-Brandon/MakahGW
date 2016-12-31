@@ -23,7 +23,7 @@ This repository is essentially a fork off the 2012 version of the code (which do
 
 1. The original Fortran code files include GUP2.FOR, which simply contains a list of "INCLUDE" statements for each *.FOR file to be compiled into the executable. This approach is the same as concantinating the text in each individual file during compilation __VS__.  
 
-2. A "MODULAR" approach, wherein, each *.FOR code file is compiled first into an object *.o file. The object files are then linked during the step of compiling the executable. 
+2. A "MODULAR" approach, wherein, each *.FOR code file is compiled first into an object *.o file. The object files are then linked during the step of compiling the executable. This is can be a more efficient approach to compiling a file set. It takes advantage of GNU Make's strengths, i.e. only compiling individual code files that have been modified. The Include approach compiles the entire file set indiscriminantly.   
 
 
 
