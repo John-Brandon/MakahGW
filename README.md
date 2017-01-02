@@ -21,11 +21,13 @@ This repository is essentially a fork off the 2012 version of the code (which do
 
 ## GNU Make(file): 
 
-1. The original Fortran code files include GUP2.FOR, which simply contains a list of "INCLUDE" statements for each *.FOR file to be compiled into the executable. This approach is the same as concantinating the text in each individual file during compilation __VS__.  
+1. The original Fortran code files include GUP2.FOR, which simply contains a list of "INCLUDE" statements for each \*.FOR file to be compiled into the executable. This approach is the same as concantinating the text in each individual file during compilation __VS__.  
 
-2. A "MODULAR" approach, wherein, each *.FOR code file is compiled first into an object *.o file. The object files are then linked during the step of compiling the executable. This is can be a more efficient approach to compiling a file set. It takes advantage of GNU Make's strengths, i.e. only compiling individual code files that have been modified. The Include approach compiles the entire file set indiscriminantly.   
+2. A "MODULAR" approach, wherein, each \*.FOR code file is compiled first into an object \*.o file. The object files are then linked during the step of compiling the executable. This is can be a more efficient approach to compiling a file set. It takes advantage of GNU Make's strengths, i.e. only compiling individual code files that have been modified. In contrast, the "Include" approach compiles the entire file set indiscriminantly.   
 
-
-
-
+## JB's Dev Environment:
+1. OS: Mac OS X El Cap.
+2. Shell: GNU bash, version 3.2.57(1)-release (x86\_64-apple-darwin15)
+3. GNU Make 3.81
+4. Compiler: GNU gcc gfortran 4.2.3 
 
