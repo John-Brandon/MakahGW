@@ -83,7 +83,7 @@ C     Extract the historical data
        Y(IY) = IY+2009
 10120 CONTINUE       
 C
-      print *, "About to try to read the GUP2 file tuning.txt"
+     
       OPEN(UNIT=666,FILE='GUP2/tuning.txt',STATUS='unknown')
       READ(666,*) Q
       READ(666,*) QHIST

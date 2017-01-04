@@ -773,22 +773,22 @@ C
       INEXTP = INEXTP+1
       IF (INEXTP.EQ.56) INEXTP = 1
       
-! DEBUGGING JRB     
+! Added some bounds JRB     
 			if (INEXT.le.0.or.INEXT.gt.55) then
-	      print *, "HELLO FROM AWEXTRD.FOR RAN1 for inext check"			
-	      print *, "ISEED", ISEED
-				print *, "INEXT", INEXT
-				print *, "INEXTP", INEXTP	
+C      print *, "HELLO FROM AWEXTRD.FOR RAN1 for inext check"			
+C      print *, "ISEED", ISEED
+C			print *, "INEXT", INEXT
+C			print *, "INEXTP", INEXTP	
 				inext = 1			
-				print *, "MA(INEXT)", MA(INEXT)
+C			print *, "MA(INEXT)", MA(INEXT)
 			end if
 			if (INEXTP.le.0.or.INEXTP.gt.55) then 
-	      print *, "HELLO FROM AWEXTRD.FOR RAN1 for inextp check"			
-	      print *, "ISEED", ISEED	      
-				print *, "INEXTP", INEXTP
-				print *, "INEXT", INEXT	
+C      print *, "HELLO FROM AWEXTRD.FOR RAN1 for inextp check"			
+C      print *, "ISEED", ISEED	      
+C			print *, "INEXTP", INEXTP
+C			print *, "INEXT", INEXT	
 				inextp = 32			
-				print *, "MA(INEXTP)", MA(INEXTP)
+C			print *, "MA(INEXTP)", MA(INEXTP)
 			end if
 			
       MJ = MA(INEXT)-MA(INEXTP)  ! This line is causing bug with MA() array bounds 
