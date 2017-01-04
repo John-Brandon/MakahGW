@@ -31,38 +31,35 @@ This repository is essentially a fork off the 2012 version of the code (which do
 3. GNU Make 3.81
 4. Compiler: GNU gcc gfortran 4.2.3 
 
-## Examples from the command line:
+## __Examples from the command line__:
+
+### Compiling
+
 ``` shell
 cd ~/MakahGW      # make sure you are at top of project directory 
 make              # compile Fortran 90 code into executable (see Makefile)
-cd ./f90/Project  # location of executable
-./main.app        # run executable for a single trial (input file, copy.dat)
 
 ``` 
-### Compiling
 
 ### Run a single trial
+
+``` shell
+cd ./f90/Project    # location of executable
+chmod a+x main.app  # only needed first time, but you may need to run as 'sudo chmod ...'
+./main.app          # run executable for a single trial (input file, copy.dat)
+```
 
 ### Run a batch of many trials
 
 ``` shell
-/Users/johnbrandon/MakahGW/f90/code
->upp
+cd ~/MakahGW/bash           # where more of the magic happens
+chmod a+x run.sh runset.sh  # grant these two scripts execute privelage. see comment above re: sudo chmod 
+./runset.sh                 # try with a small set first (e.g. say 4 trials), before moving onto the full set (72 trials and ~48 mins on 2016 MacBook Pro)
+```
 
-/Users/johnbrandon/MakahGW
->make
-cd ./f90/code;\
-gfortran -fbounds-check -c -w F2TST9.FOR;
-cd ./f90/code;\
-gfortran -fbounds-check -w -c GUP2.FOR;
-cd ./f90/code;\
-gfortran -fbounds-check -w -c AWEXTRD.FOR;
-gfortran -fbounds-check -w ./f90/code/F2TST9.o ./f90/code/MATRIX.o ./f90/code/COMMON.o ./f90/code/DMSLC.o ./f90/code/JBSLC.o ./f90/code/GUP2.o ./f90/code/AWEXTRD.o -O3 -o ./f90/Project/main.app;
-/Users/johnbrandon/MakahGW
->fp 
+### Example ouput in terminal from single trial run
 
-/Users/johnbrandon/MakahGW/f90/Project
->./main.app
+``` shell
 -----------------------------------------
 --------------------
 ------------
@@ -85,3 +82,5 @@ Target popln 2 not hit   81.9562963746184        73.1372725000000
 ------------
 --------------------
 -----------------------------------------
+
+```
