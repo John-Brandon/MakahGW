@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # verbose 
-set -x
+#set -x
 
 # echo 'Hello from runset.sh'
 # echo $PWD

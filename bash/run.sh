@@ -9,7 +9,7 @@
 #+   bash script here by John Brandon. 
 # -----------------------------------------------------------------------
 
-set -x
+#set -x
 
 # cd ~/MakahGW/f90/Project
 # ~/MakahGW/bash
@@ -25,8 +25,8 @@ rm aw-res;
 
 echo "Running Trial G$1"
 
-#cp ./Runstreams/G$1.DDD ./copy.dat
-cp ./Runstreams/GB01a.DDD ./copy.dat;
+cp ./Runstreams/G$1.DDD ./copy.dat
+#cp ./Runstreams/GB01a.DDD ./copy.dat;
 
 cp manage.z manage.dat;
 ./main.app | tee a.0;
