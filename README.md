@@ -53,8 +53,9 @@ chmod a+x main.app  # only needed first time, but you may need to run as 'sudo c
 
 ``` shell
 cd ~/MakahGW/bash           # where more of the magic happens
-chmod a+x run.sh runset.sh  # grant these two scripts execute privelage. see comment above re: sudo chmod 
-./runset.sh                 # try with a small set first (e.g. say 4 trials), before moving onto the full set (72 trials and ~48 mins on 2016 MacBook Pro)
+chmod a+x run.sh runset.sh  # grant these scripts execute privelage. see comment above re: 'sudo chmod ...' 
+./runset.sh                 # try with a small set first (e.g. say 4 trials), 
+                            # before moving onto the full set (72 trials and ~48 mins on 2016 MacBook Pro)
 ```
 
 ### Example ouput in terminal from single trial run
