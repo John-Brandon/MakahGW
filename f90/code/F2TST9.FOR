@@ -143,10 +143,15 @@ C --------------------------------------------------------------------
 C --------------------------------------------------------------------
 
       MODULE ALT_PCFG
-! Variables introduced for modeling an alternating season Makah hunt  
+! Variables introduced for modeling an alternating season Makah hunt 
+! Note: Carryover option not currently implemented, but have 
+!  place-holder variables here for developing code. 
 ! Added by John Brandon, Winter 2016
       	LOGICAL winter_season
       	INTEGER mod_yr  ! modulus(x = 2) of year number: summer v winter season
+        real, parameter :: HCM = 0.4d0  ! Human caused mortality: ABL = PBR - HCM
+        real(kind = 8) :: carryover_winter, carryover_summer 
+        real(kind = 8) :: carryover_all  ! carryover not currently implemented
       END MODULE ALT_PCFG
 
 C --------------------------------------------------------------------
@@ -314,14 +319,14 @@ C INITIALISATION -------------------------------------------------------
 C
       PROG = 'F2TST: V9'
 
-C Print filler lines before next trial (if running a batch)
+C 	Print filler lines before next trial (if running a batch)
 			print *, "-----------------------------------------"
 			print *, "--------------------"
 			print *, "------------"                
 			print *, "------"                
 			print *, "--"
 
-C Read input file header.       
+C 	Read input file header.       
       READ (IN,'(T37,A /A/2(/45X,A))') REF,DESC,PARFIL,MATFIL
 
 C      
@@ -334,7 +339,7 @@ C     If MANAGE=C constant strike limit is set = CCONST
      +    CCONST1, CCONST2, PCFGCASE
       CLOSE(16) 
 
-C DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+C 	DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 C     print *, "About to open AW-RES file"
 			print *, ""
 			print *, "CATCH TREATMENT OPTION (MANAGE):  ", MANAGE
@@ -343,8 +348,7 @@ C     print *, "DOCON", DOCON
 C     print *, "CCONST1", CCONST1
 C     print *, "CCONST2", CCONST2                  
 C     print *, "PCFGCASE", PCFGCASE      
-         
-			
+         	
       OPEN (IOUT,FILE='AW-RES'// MANAGE,STATUS='UNKNOWN')
       WRITE (IOUT,'(/4A/1X,A/)')' CASE: ',REF,'     PROGRAM: ',PROG,DESC
 C
@@ -352,31 +356,43 @@ C     Open Catch file (CATCHB.DAT or CATCHG.DAT)
       OPEN (IN3,FILE='CATCH'//REF(1:1)//'.DAT',STATUS='OLD')
 			
 C     Call INIT to read in / set up parameters.
+C 		Including MonthHarvest
       CALL INIT (CATM,CATF,SIGHT,CVX,NYEAR,IYRMAN,IQUOTA)
-C
-C     Adjust for month -----------------------------------------------------
 
+C     Adjust for month -----------------------------------------------------
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !  Note:
-!  The "MonthHarvest" (i.e. summer or winter) will ultimately depend
-!   on the year (not PCFGCASE per se) for the alternating season option. 
-!  Can leave PCFGCASE = 1 for input files, but will need to revise
-!   code that sets MonthHarvest. 
-!  These revisions will need to be implemented in the loop over years (IYR)
-      IF (PCFGCASE.EQ.1) MonthHarvest = 4
-      
+!  The "MonthHarvest" (i.e. summer or winter / spring) will ultimately depend
+!   on the year for the alternating season option. 
+!  Have left PCFGCASE = 1 for input files, but revised code that sets MonthHarvest.
+!  Revisions include a revised set of conditional if/else statements 
+!    inside the loop over years (IYR). The revised code also allows NEED 
+!    to alternate between even / odd years.
+!  With respect to MonthHarvest: this variable is used to allocate struck and lost 
+!    whales to stock, based on assumption of availability.
+!  Also note, PCFGCASE corresponds to the SLA variants in 2012 -- 
+!    see JCRM 2013 v14 (Suppl.) Annex E Appendix 2 Table 5 (p 161).
+! PCFGCASE:
+!		1, 4, or 7] December to April (winter hunt); MonthHarvest = 4
+!		2, 5, or 8] May (summer hunt); MonthHarvest = 5 ; PhiFutPCFG = Trial Specified
+!		21 - 26] MonthHarvest = 99; used for splitting takes between winter and May during 2012 - deprecated.
+!		3, 6, 9, 11] MonthHarvest = 5; PhiFutPCFG = 1.0; DeltaFutPCFG = (200.0/PhiFutPCFG  - 200.0)/20000.0 
       IF (PCFGCASE.EQ.1.OR.PCFGCASE.EQ.4.OR.PCFGCASE.EQ.7.
      +    OR.PCFGCASE.EQ.10) MonthHarvest = 4
       IF (PCFGCASE.EQ.2.OR.PCFGCASE.EQ.5.OR.PCFGCASE.EQ.8) 
      +    MonthHarvest = 5
       IF (PCFGCASE.GE.21.AND.PCFGCASE.LE.26) 
      +    MonthHarvest = 99
+! These SLA variants assume 100% PCFG availability (PhiFutPCFG) in May     
       IF (PCFGCASE.EQ.3.OR.PCFGCASE.EQ.6.OR.PCFGCASE.EQ.9.
      +    OR.PCFGCASE.EQ.11) THEN
        MonthHarvest = 5
        PhiFutPCFG = 1.000
-       DeltaFutPCFG   = (200.0/PhiFutPCFG  - 200.0)/20000.0
+       DeltaFutPCFG   = (200.0/PhiFutPCFG  - 200.0)/20000.0  ! Why not just DeltaFutPCFG = 0.d0 ?
+! Noting DeltaFutPCFG "...is the relative probability of harvesting a PCFG vs north animal
+! had the sizes of the two populations been the same." Eqn A3.1 and A3.2 (p 156 Appendix 2 JCRM 2013 Suppl)
       ENDIF
+
 C
 C     Reset the future reference incidental catch if MANAGE = I
       AVEINCCATF = AVEINCCAT
@@ -575,8 +591,35 @@ C            Ensure 0 <= NEWQ <= NEED
             ENDIF
           ENDIF
 
-! PCFG QUOTA				
+!  Determine if this is a winter/spring or summer hunt. Set variables accordingly. 
+!		Determine if this year is a winter or summer hunt season (alternating between years).
+! 	+  Set NEED equal to max strikes per season (2 for summer, 3 for winter)
+!   +  During the 2012 IWC IR, the proposed hunting season had some overlap between 
+!        winter / summer. The original code for that evaluation, assumed PCFG
+!        availability, and whether a struck whale was PCFG, etc., changed
+!        on the 1st of May (i.e. MonthHarvest = 5).
+
+!    Determine if even or odd numbered year. i.e. winter or summer hunt.
+          mod_yr = mod(iyr, 2)  ! Take modulus(2) of year. Returns zero or one.			
+
+          if (mod_yr == 0) then
+            winter_season = .TRUE.  ! Winter hunt
+            MonthHarvest = 4
+		    NEED(2,IYR) = 3         ! PCFG Need = max Winter strikes
+!           PCFGCASE = 1            
+!           PhiFutFCFG = PhiFutPCFG  ! PCFG availability = Trial specified       
+!           DeltaFutPCFG = DeltaFutPCFG
+          else 
+            winter_season = .FALSE.  ! Summer hunt
+            MonthHarvest = 5         
+            NEED(2,IYR) = 2          ! PCFG Need = max Summer strikes
+!           PCFGCASE = 3             
+!           PhiFutPCFG = 1.d0        ! PCFG availability = 100%         
+!           DeltaFutPCFG = (200.d0 / PhiFutPCFG - 200.d0) / 20000.d0
+          end if
+					
 C ----------------------------------------------------------------------------------------				
+! 	PCFG QUOTA	
 C         Test if a new quota is needed for the PFCG area, NEWQ2, is to be set 
 C         this year for use in IYRQ (if NEED(2,IYR)>0, IYR=0) 
           IF (NEED(2,IYR).GT.0.D0 .OR. IYR.EQ.0) THEN
@@ -586,27 +629,38 @@ C         this year for use in IYRQ (if NEED(2,IYR)>0, IYR=0)
             NEEDI = NEED(2,IYRQ)
 
 C
-C           Call SLC (subsistence limit calculation) to set the block quota.	
-! PCFGCASE:
-!		1, 4, or 7] December to April (winter hunt); MonthHarvest = 4
-!		2, 5, or 8] May (summer hunt); MonthHarvest = 5 (assumes 100% of strikes are PCFG)
-!		21 - 26] MonthHarvest = 99
-!		3, 6, 9, 11] MonthHarvest = 5; PhiFutPCFG = 1.0; DeltaFutPCFG = (200.0/PhiFutPCFG  - 200.0)/20000.0
-				
-            IF (MANAGE.EQ.' ') THEN
-               NVAL = NEEDI / DBLE(IQUOTA(2))
+C           Call SLC (subsistence limit calculation) to set the block quota.		
+            IF (MANAGE.EQ.' ') THEN            ! Base case 
+              NVAL = NEEDI / DBLE(IQUOTA(2))  ! At present, block iquota (= 1) set every year for PCFG
+
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! Need to replace SLCPFCG code with procedures that return
-! 	strike limit conditional on whether it is a winter or summer hunt year
-! The SLCPFCG procedure is defined in GUP2.FOR 
-               
-               CALL SLCPFCG (CATM,CATF,SIGHT,CVX,IYRQ,ICAT1,ISUR1,
+              print *, ""
+              print *, "IYR", IYR
+              print *, "IQOUTA(2)", IQUOTA(2)  ! CHECK THIS IS DURATION OF PCFG BLOCK QUOTA
+!              print *, "NYEAR", NYEAR  ! NYEAR = 100
+              print *, "ABL(IYR)", ABL(IYR)
+              print *, "CALLING SLCPFCG"
+! Strike Limit Control (SLC) returns variable ABLV for ABL value (equal to PBR). 							 
+              CALL SLCPFCG (CATM,CATF,SIGHT,CVX,IYRQ,ICAT1,ISUR1,
      +               NEEDI, NEWQ2,NSIM,IQUOTA(1),ABLV)
-     
-C             Ensure 0 <= NEWQ <= NEED
+              print *, "ABLV", ABLV
+
+!   Subtract incidental human caused mortality from PBR for PCFG
+              ABLV = ABLV - HCM
+
+C             Ensure 0 <= NEWQ <= NEED 
+              print *, "MIN(ABLV, NVAL)", MIN(ABLV, NVAL)
               ABLV = INT(MAX(0.D0, MIN(ABLV,NVAL)))
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-              
+              print *, ""
+              print *, "ABLV reset"
+              print *, "NVAL", NVAL  ! NVAL is set to NEED(2,IYRQ) the seasonal strike limit
+              print *, "ABLV", ABLV
+C
+              if (N.eq.1 .and. IYR.ge.10) then
+                print *, "ABL(1:10)", ABL(1:10)
+                stop
+              end if
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
               IF (PCFGCASE.GE.4.AND.PCFGCASE.LE.6) ABLV = 1
               IF (PCFGCASE.GE.7.AND.PCFGCASE.LE.9) ABLV = 2
               IF (PCFGCASE.GE.10.AND.PCFGCASE.LT.20) ABLV = 100
@@ -640,7 +694,7 @@ C          Store values for next IQUOTA(1) years
             CATCHF(1,I) = CATF(1,I)
    50      CONTINUE
           ENDIF
-
+! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! PCFG: Allocate quota over time block					
 C         If NEED>0 the new quota will be applied this year for IQUOTA(2) years
           IF (NEED(2,IYR).GT.0D0) THEN
@@ -650,6 +704,7 @@ C          Store values for next IQUOTA(2) years
              ABL(I) = ABLV
    51      CONTINUE
           ENDIF
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!          
 C
 C         Specify the probability of false negatives. If surveys only occur every
 C         five years we need to adjust this probability
@@ -687,43 +742,50 @@ C         Set the various counters to zero
           Landed(IYR) = 0
           Strikes(IYR) = 0
           StruckLost(IYR) = 0
-          PCFGDesignated(IYR) = 0
-          
-! Determine season for Makah hunt and set strike limit parameters accordingly           
-! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					mod_yr = mod(IYR, 2)	! Calculate modulus to determine if yr is odd or even
-					IF (mod_yr == 0 .and. N == 1) THEN
-					! Even years (incl 0) have winter hunt season
-						MonthHarvest = 4
-C					print *, "-----------------------------------"					
-C					print *, "IYR", IYR
-C					print *, "hunt season: WINTER" 
-					ELSE IF (mod_yr == 1 .and. N == 1) THEN
-					! Odd years have summer hunt season					
-						MonthHarvest = 5					
-C					print *, "-----------------------------------"					
-C					print *, "IYR", IYR
-C					print *, "hunt season: SUMMER" 
-					END IF					
-! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+          PCFGDesignated(IYR) = 0          
           
 556       CONTINUE      ! -----------------------------------------------------
 
 !  Check limits before a strike is allowed 
 C
+!  This bit should be updated. During 2012 IR there was a limit to struck and 
+!  lost in the hunt plan. This is not true of the 2017 alternating season
+!  plan; the limit is on the number of strikes (irregardless of lost or landed). 
+!  Moreover, the max strike limit differs between seasonal hunts: winter/spring (3 strikes)
+!  vs summer (2 strikes). The max strike limit for the current year is set above (see line 594),
+!  and stored in the NEED matrix. 
+!    These decision rules need to be revised accordingly.
+!  JRB
+
+! Strike limit reached. 
+! NOTE: Because NEED has been set equal to the max strike limit (3 for winter, 2 for summer), 
+!       This condition effectively implements the strike limit. 
+          if (Strikes(IYR) .GE. NEED(2, IYR)) then
+            Reason(IYR) = 1  ! Keep track of this reason for stopping hunt. 
+            GOTO 555         ! Proceed to next year's hunt.
+          end if
+
+!          2012 (old) rule
 C         Stop harvest: struck and lost hits 3
-          IF (StruckLost(IYR).EQ.3) THEN
-           Reason(IYR) = 1
-           GOTO 555  ! Exit looping over strikes
-          ENDIF 
+!          Alternating Season hunt plan has no explicit limits on lost or landed, just strikes.
+!          IF (StruckLost(IYR).EQ.3) THEN
+!           Reason(IYR) = 1
+!           GOTO 555  ! Exit looping over strikes
+!          ENDIF 
+
 C
-C         Stop harvest: ABL has been reached
+C         Stop harvest: PCFG Mortality Limit (ABL) has been reached
+!  Note that ABL is declared and treated as an integer value. 
           IF (PCFGDesignated(IYR).EQ.ABL(IYR)) THEN
            Reason(IYR) = 3
            GOTO 555  ! Exit looping over strikes
           ENDIF 
 C
 C         Landing Block quota exceeded?
+!   Don't believe this is needed for 2017 alternating season plan, which is not limited 
+!   by numbers of landed whales (only ABL and max strikes). Would still be good to keep
+!   the tally of landed whales, but don't need the control statements for stopping
+!   the hunt or keeping track of how many times hunt was stopped after landing XX whales. 
           BLOCKSTART = MAX(0,INT(IYR/5)*5)
           TotalLands = 0
           DO 557 IYR2 = BlockStart,IYR
@@ -774,35 +836,45 @@ C
 C         Rules differs depend on whether the animals was struck and lost -------
           IF (StruckAndLost) THEN
 C
-C          Struck & Lost in December - April [do nothing]
-           IF (MonthHarvest.EQ.4) THEN
-           ENDIF
-C
-C          Struck & Lost in May [counts as PCFG]
-           IF (MonthHarvest.EQ.5) THEN
-            PCFGDesignated(IYR) = PCFGDesignated(IYR) + 1
-           ENDIF
-C
-C          Special case
-           IF (MonthHarvest.GE.99) THEN
-            NumBeforeMay = PCFGCASE-20
-C            IF (StruckLost(Iyr).GT.NumBeforeMay) THEN
-            IF (Strikes(Iyr).GT.NumBeforeMay) THEN
-             PCFGDesignated(IYR) = PCFGDesignated(IYR) + 1
+C           Struck & Lost in Winter / Spring hunt: 
+!             This treatment differs from 2012 Hunt Plan, which assumed
+!           that struck and lost whales in winter / spring were only from the 
+!           northern stock (in practice, the resulting north mortality rate ignored).
+!             For the alternating season hunt plan, struck and lost whales during
+!           winter/spring count against ABL in proportion to PCFG availability,
+!           PhiFutPCFG = 0.3 (base case). 
+            IF (MonthHarvest.EQ.4) THEN
+              RAND = RAN1(ISEED5, MA5, INEXT5, INEXTP5)
+              if (RAND .LT. PhiFutPCFG) then
+                PCFGDesignated(IYR) = PCFGDesignated(IYR) + 1
+              end if
             ENDIF
-           ENDIF
+C
+C           Struck & Lost in Summer hunt [counts as PCFG]
+            IF (MonthHarvest.EQ.5) THEN
+              PCFGDesignated(IYR) = PCFGDesignated(IYR) + 1
+            ENDIF
+C
+C           Special case
+            IF (MonthHarvest.GE.99) THEN
+              NumBeforeMay = PCFGCASE-20
+C             IF (StruckLost(Iyr).GT.NumBeforeMay) THEN
+              IF (Strikes(Iyr).GT.NumBeforeMay) THEN
+                PCFGDesignated(IYR) = PCFGDesignated(IYR) + 1
+              ENDIF
+            ENDIF
 C
           ELSE
 C
-C          Landed - now match against catalogue ---------------------------------
-           Landed(IYR) = Landed(IYR) + 1
+C           Landed - now match against catalogue ---------------------------------
+            Landed(IYR) = Landed(IYR) + 1
 C
-C          Is Detected?
-           RAND = RAN1(ISEED5,MA5,INEXT5,INEXTP5)
-           IF (RAND.LT.ProbDetect) 
-     +       PCFGDesignated(IYR) = PCFGDesignated(IYR) + 1
+C           Is Detected?
+            RAND = RAN1(ISEED5,MA5,INEXT5,INEXTP5)
+            IF (RAND.LT.ProbDetect) 
+     +        PCFGDesignated(IYR) = PCFGDesignated(IYR) + 1
 C     
-          ENDIF       
+           ENDIF       
 C          
           GOTO 556  ! Strike taken, loop to next potential strike 
 555       CONTINUE  ! Limit reached, proceed with accounting etc.        
