@@ -159,7 +159,7 @@ C     NSIM    Simulation number (i.e. replicate number)
       
 C     Initialize 2017 values
       F_R = 0.5d0     ! PCFG specific value (NMFS) for depletion unknown
-      R_MAX = 0.62d0  ! This is for ENP gray whales in general
+      R_MAX = 0.062d0  ! This is for ENP gray whales in general
 
 C
 C     Dummy Code
@@ -187,7 +187,14 @@ C     Three year delay between a survey be conducted and being used
 C      WRITE(*,*) 2010+IYR,2010+IY,SIGHT(IY)
       NMIN = SIGHT(IY)/EXP(0.842*SQRT(LOG(1+CVX(IY)**2.0)))
       ABL = NMIN * 0.5 * R_MAX * F_R
+! DEBUGGING JRB
+      print *, "Hello from SLCPFCG"
+      print *, "SIGHT(IY)", SIGHT(IY)
+      print *, "CVX(IY)", CVX(IY)
+      print *, "NMIN", NMIN
+      print *, "PBR", ABL     
       ABL = MAX(0.0d0,MIN(NEED,ABL))
+      print *, "ABL = MAX(0.0d0,MIN(NEED,ABL))", ABL      
 C
       RETURN
       END
