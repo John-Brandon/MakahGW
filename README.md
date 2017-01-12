@@ -10,16 +10,11 @@ This fork includes some independent developments and implements an alternative S
 
 ## Project notes: 
 
-2. Code is being developed to evaluate (via simulation) an alternating season hunt strategy (e.g. odd years hunt in winter, even years in summer, or vice-versa). 
-
 1. Results from the the version of the code obtained from AEP have been checked against those reported during 2012 and found to be identical.    
 
-3. The developmental version of the code by JRB is on a parrallel branch named, `alt_sla`. 
-	a. Foo.
-
-4. Population dynamics and availability (to hunters) are modeled for two stocks (North and PCFG). The dynamics between stocks are treated independently with one exception. Immigration from the larger stock into the smaller stock is allowed. 
-
-
+2. The developmental version of the code by JRB is on a parrallel branch named, `alt_sla` (c.f. the `master` branch). 
+  a. The Strike Limit Algorithm for this hunt is based on an alternating season hunt strategy (e.g. odd years hunt in winter with max strike of 3, even years in summer with max strike 2)..
+  b. There are several differences between the developmental SLA and that from 2012, including but not limited to an absence of block quotas for the PCFG stock. 
 
 ## Shell scripting: 
 
