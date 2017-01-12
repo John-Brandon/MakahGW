@@ -2,17 +2,23 @@
 
 Management Strategy Evaluation of alternating seasonal hunts for gray whales. 
 
-Original Fortran source code provided by Andre E. Punt (Univ. of Washington). That version of the code was used by the Aboriginal Whaling Management Procedure Working Group, for the Gray Whale Implementation Review, at the 2012 meeting of the Scientific Committee of the International Whaling Commission. 
+Original Fortran source code provided by courtesy of Andre E. Punt (Univ. of Washington) and Cherry Allison (IWC). That version of the code was used by the most recent Aboriginal Whaling Management Procedure Working Group Gray Whale Implementation Review, as presented to the Scientific Committee of the International Whaling Commission. 
 
-This repository is essentially a fork off the 2012 version of the code (which does not have its own repository at present). This fork includes some independent developments and implements an alternative Strike Limit Control rule.   
+This repository is a fork off the 2012 version of the code. The base of the master branch (i.e. the files used for the 2012 runs) can be assessed by 
+
+This fork includes some independent developments and implements an alternative Strike Limit Control rule.   
 
 ## Project notes: 
 
-1. Code is being developed to evaluate (via simulation) an alternating season hunt strategy (e.g. odd years hunt in winter, even years in summer, or vice-versa). 
+2. Code is being developed to evaluate (via simulation) an alternating season hunt strategy (e.g. odd years hunt in winter, even years in summer, or vice-versa). 
 
-2. Results from available code and 2012 runs have been checked and are equal.
+1. Results from the the version of the code obtained from AEP have been checked against those reported during 2012 and found to be identical.    
 
-3. Population dynamics and availability (to hunters) are modeled for two stocks. The dynamics between stocks are treated independently with one exception. Immigration from the larger stock into the smaller stock is allowed. 
+3. The developmental version of the code by JRB is on a parrallel branch named, `alt_sla`. 
+	a. Foo.
+
+4. Population dynamics and availability (to hunters) are modeled for two stocks (North and PCFG). The dynamics between stocks are treated independently with one exception. Immigration from the larger stock into the smaller stock is allowed. 
+
 
 
 ## Shell scripting: 
