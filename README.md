@@ -4,9 +4,7 @@ Management Strategy Evaluation of alternating seasonal hunts for gray whales.
 
 Original Fortran source code provided by courtesy of Andre E. Punt (Univ. of Washington) and Cherry Allison (IWC). That version of the code was used by the most recent Aboriginal Whaling Management Procedure Working Group Gray Whale Implementation Review, as presented to the Scientific Committee of the International Whaling Commission. 
 
-This repository is a fork off the 2012 version of the code. The base of the master branch (i.e. the files used for the 2012 runs) can be assessed by 
-
-This fork includes some independent developments and implements an alternative Strike Limit Control rule.   
+This repository is a fork off the 2012 version of the code. The base of the master branch (i.e. the version of files used for the 2012 runs) can be accessed through `git` by cloning this repository and reverting to the first commit (SHA1 80f57d2).    
 
 ## Project notes: 
 
@@ -19,14 +17,15 @@ This fork includes some independent developments and implements an alternative S
 ## Shell scripting: 
 
 1. DOS batch files have been ported to Bash scripts (running under Mac OS 10.11.6).
-2. See Examples from the command line, below. 
+2. See "Examples from the command line", below. 
 
 ## GNU Make(file): 
 
 1. Previously, the original set of Fortran code files were compiled using F2-gup2.FOR, which simply contains a list of "INCLUDE" statements for each \*.FOR file to be compiled into the executable.   
 
 2. As an alternative to the use of "INCLUDE" statements, see the `Makefile`. This uses a "MODULAR" approach to compiling, wherein, each \*.FOR code file is compiled first into an object \*.o file. The object files are then linked during the step of compiling the executable. Compiling individual object files can take advantage of GNU Make's strengths, i.e. only modified code files are recompiled when linking the executable. In contrast, the "Include" approach compiles the entire file set indiscriminantly.
-     1. An option has been added to the `Makefile` to run individual trials with the `make run` command. 
+     1. An option has been added to the `Makefile` to run individual trials with the `make run` command.
+     2. See "Examples from the command line" below for an example of compiling with the `make` command in Bash.
 
 ## JB's Dev Environment:
 1. OS: Mac OS X El Cap.
@@ -50,6 +49,10 @@ make              # compile Fortran 90 code into executable (see Makefile)
 cd ./f90/Project    # location of executable
 chmod a+x main.app  # only needed first time, but you may need to run as 'sudo chmod ...'
 ./main.app          # run executable for a single trial (input file, copy.dat)
+
+# Alternatively, after you've run chmod (change mode) on main.app
+cd ~/MakahGW
+make run            # useful tool for debugging
 ```
 
 ### Run a batch of many trials
