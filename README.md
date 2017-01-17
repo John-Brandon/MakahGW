@@ -14,11 +14,12 @@ The developmental version of the code by JRB is on a parrallel branch named, `al
 	  1.  An absence of block quotas for the PCFG stock.
 	  2.  The summer hunt is stopped if one whale is landed. 
 	  3.  The annual PCFG Strike Limit can not be greater than ABL = PBR - HCM. 
-	      where:  HCM = Human Caused Mortality (non-hunting, and set equal to 0.40) 
-	              PBR = N_MIN * 0.5 * R_MAX * F_R
-		      N_MIN = 40th percentile of abundance estimate with log-normal sampling error.
-		      R_MAX = 0.062 (Carretta et al. 2015. U.S. Pacific Marine Mammal Stock Assessments)
-		      F_R   = 0.50 for undetermined status relative to the Optimum Sustainable Population level under the U.S. MMPA (Carretta et al. 2015. U.S. Pacific Marine Mammal Stock Assessments)
+	      where:  
+	      * HCM = Human Caused Mortality (non-hunting, and set equal to 0.40) 
+	      * PBR = N_MIN * 0.5 * R_MAX * F_R
+	      * N_MIN = 40th percentile of abundance estimate with log-normal sampling error.
+	      * R_MAX = 0.062 (Carretta et al. 2015. U.S. Pacific Marine Mammal Stock Assessments)
+	      * F_R   = 0.50 for undetermined status relative to the Optimum Sustainable Population level under the U.S. MMPA (Carretta et al. 2015. U.S. Pacific Marine Mammal Stock Assessments)
 
 <p align="center">
   <img src="./figs/FlowChart.png" width="850" align="center" title="Makah Alternating Season Strike Limit Algorithm">
