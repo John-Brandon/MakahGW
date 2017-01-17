@@ -21,7 +21,7 @@ The developmental version of the code by JRB is on a parrallel branch named, `al
 		      F_R   = 0.50 for undetermined status relative to the Optimum Sustainable Population level under the U.S. MMPA (Carretta et al. 2015. U.S. Pacific Marine Mammal Stock Assessments)
 
 <p align="center">
-  <img src="./figs/FlowChart.png" width="550" align="center" title="Makah Alternating Season Strike Limit Algorithm">
+  <img src="./figs/FlowChart.png" width="850" align="center" title="Makah Alternating Season Strike Limit Algorithm">
 </p>
 
 ## Project notes: 
