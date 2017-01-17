@@ -54,7 +54,9 @@ The developmental version of the code by JRB is on a parrallel branch named, `al
 
 ## __Examples from a Bash command line__:
 
-![Example output from single trial run](./figs/makerun.gif)
+<p align="center">
+  <img src="./figs/makerun.gif" width="480" height="240" align="center">
+</p>
 
 ### Compiling
 
