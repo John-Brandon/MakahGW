@@ -54,6 +54,8 @@ The developmental version of the code by JRB is on a parrallel branch named, `al
 
 ## __Examples from a Bash command line__:
 
+![Example output from single trial run](./figs/makerun.gif)
+
 ### Compiling
 
 ``` shell
@@ -84,10 +86,6 @@ chmod a+x run.sh runset.sh  # grant these scripts execute privelage. see comment
 ```
 
 ### Example ouput in terminal from single trial run
-
-Test GIF
-![Example output from single trial run](./figs/makerun.gif)
-
 
 ``` shell
 -----------------------------------------
