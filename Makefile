@@ -44,7 +44,7 @@ OBJECT_FILES := F2TST9.o MATRIX.o COMMON.o DMSLC.o JBSLC.o GUP2.o AWEXTRD.o
 OBJECT_FILES := $(addprefix $(CODE_DIR)/,$(OBJECT_FILES))
 
 # Define search paths -------------------------------------------------------------------
-VPATH = ./f90/code/
+# VPATH = ./f90/code/
 # vpath %.for ./f90/code
 # vpath %.FOR ./f90/code
 # vpath %.o ./f90/code
@@ -144,10 +144,16 @@ $(CODE_DIR)/aw-res7.o: $(CODE_DIR)/AW-RES7.FOR
 	gfortran $(GFFLAGS) -c AW-RES7.FOR
 		
 # Delete files resulting from compiling -------------------------------------------------
-.PHONY: clean	
+.PHONY: clean, run	
 clean:
 	rm $(OBJECT_FILES)
 	rm $(CODE_DIR)/*.mod 
 	rm $(PROJ_DIR)/main.app
 	rm $(PROJ_DIR)/proc.app	
-	rm $(PROJ_DIR)/aw-res7.app	
+	rm $(PROJ_DIR)/aw-res7.app
+
+run: 
+	@echo 
+	@echo Running main.app;
+	cd $(PROJ_DIR) && ./main.app;
+
