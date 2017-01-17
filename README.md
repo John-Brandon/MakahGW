@@ -2,7 +2,7 @@
 
 Management Strategy Evaluation of alternating seasonal hunts for gray whales. 
 
-Original Fortran source code provided by courtesy of Andre E. Punt (Univ. of Washington) and Cherry Allison (IWC). That version of the code was used by the most recent Aboriginal Whaling Management Procedure Working Group Gray Whale Implementation Review, as presented to the Scientific Committee of the International Whaling Commission. 
+Original Fortran source code provided courtesy of Andre E. Punt (Univ. of Washington) and Cherry Allison (IWC). That version of the code was used by the most recent Aboriginal Whaling Management Procedure Working Group Gray Whale Implementation Review, as presented to the Scientific Committee of the International Whaling Commission. 
 
 This repository is a fork off the 2012 version of the code. The base of the master branch (i.e. the version of files used for the 2012 runs) can be accessed through `git` by cloning this repository and reverting to the first commit (SHA1 80f57d2).    
 
@@ -11,8 +11,14 @@ This repository is a fork off the 2012 version of the code. The base of the mast
 1. Results from the the version of the code obtained from AEP have been checked against those reported during 2012 and found to be identical.    
 
 2. The developmental version of the code by JRB is on a parrallel branch named, `alt_sla` (c.f. the `master` branch). 
-     1. The Strike Limit Algorithm for this hunt is based on an alternating season hunt strategy (e.g. odd years hunt in winter with max strike of 3, even years in summer with max strike 2)..
+     1. The Strike Limit Algorithm for this hunt is based on an alternating season hunt strategy (e.g. odd years hunt in winter with max strike of 3, even years in summer with max strike 2).
      2. There are several differences between the developmental SLA and that from 2012, including but not limited to an absence of block quotas for the PCFG stock. 
+
+3. Reasons and corresponding IDs for stopping the hunt (see also the `Reason` vector in code):
+     1. 2 strikes total during summer hunt year.
+     2. 3 strikes total during winter/spring hunt year. 
+     3. PCFG strike limit (ABL) reached.
+     4. Landed one whale in summer.
 
 ## Shell scripting: 
 
@@ -50,7 +56,7 @@ cd ./f90/Project    # location of executable
 chmod a+x main.app  # only needed first time, but you may need to run as 'sudo chmod ...'
 ./main.app          # run executable for a single trial (input file, copy.dat)
 
-# Alternatively, after you've run chmod (change mode) on main.app
+### Alternatively, after you've run chmod (change mode) on main.app
 cd ~/MakahGW
 make run            # useful tool for debugging
 ```
