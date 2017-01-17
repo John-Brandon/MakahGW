@@ -9,7 +9,7 @@ The developmental version of the code by JRB is on a parrallel branch named, `al
 1. The Strike Limit Algorithm for this hunt is based on an alternating season hunt strategy (e.g. odd years hunt in winter with max strike of 3, even years in summer with max strike 2).
 
 2. There are several additional differences between the developmental SLA and that from 2012, including:
-	  1.  An absence of block quotas for the PCFG stock.
+	  1.  An absence of block quotas for landed whales.
 	  2.  The summer hunt is stopped if one whale is landed. 
 	  3.  The annual PCFG Strike Limit can not be greater than ABL = PBR - HCM. 
 	      where:  
@@ -25,7 +25,7 @@ The developmental version of the code by JRB is on a parrallel branch named, `al
 
 ## Project notes: 
 
-1. Results from the the version of the code obtained from AEP have been checked against those reported during 2012 and found to be identical.    
+1. Results from the the version of the code obtained from AEP (i.e. the root commit on the `master` branch) have been checked against those reported during 2012 and found to be identical.    
 
 2. Reasons and corresponding IDs for stopping the hunt (see also the `Reason` vector in code):
      1. 2 strikes total during summer hunt year.
@@ -52,7 +52,7 @@ The developmental version of the code by JRB is on a parrallel branch named, `al
 3. GNU Make 3.81
 4. Compiler: GNU gcc gfortran 4.2.3 
 
-## __Examples from the command line__:
+## __Examples from a Bash command line__:
 
 ### Compiling
 
@@ -84,6 +84,10 @@ chmod a+x run.sh runset.sh  # grant these scripts execute privelage. see comment
 ```
 
 ### Example ouput in terminal from single trial run
+
+Test GIF
+![Example output from single trial run](./figs/makerun.gif)
+
 
 ``` shell
 -----------------------------------------
