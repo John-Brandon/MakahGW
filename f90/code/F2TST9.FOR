@@ -772,9 +772,13 @@ C         Set the various counters to zero
 ! NOTE: Because NEED has been set equal to the max strike limit (3 for winter, 2 for summer), 
 !       This condition effectively implements the strike limit. 
           if (Strikes(IYR) .GE. NEED(2, IYR)) then
-            Reason(IYR) = 1  ! Keep track of this reason for stopping hunt. 
-            call debug(N, IYR, "Strikes equal to need.")  ! Catch error for 2017
-            GOTO 555         ! Proceed to next year's hunt.
+            IF (winter_season .neqv. TRUE) THEN 
+              Reason(IYR) = 1  ! Hit limit of 2 strikes (PCFG) during summer. . 
+              call debug(N, IYR, "Strikes equal to need.")  ! Catch error for 2017
+              GOTO 555         ! Proceed to next year's hunt.
+            ELSE
+              Reason(IYR) = 2  ! Hit limit of 3 total strikes during winter
+            ENDIF
           end if
 
 !          2012 (old) rule
@@ -792,7 +796,7 @@ C         Stop harvest: PCFG Mortality Limit (ABL) has been reached
 !  Specifically, ABL(IYR) = ABLV rounded down to floor integer.
 !  PCFGDesignated is set below in the if/then statement for StruckAndLost
           IF (PCFGDesignated(IYR).EQ.ABL(IYR)) THEN  ! PCFGDesignated set below
-            Reason(IYR) = 3 
+            Reason(IYR) = 3  ! PCFG strikes hit ABL = PBR - HCM 
 ! Struck and lost assumed to be PCFG in summer hunts (2017)
 ! Struck and lost assumed 0.3 of a PCFG whale in winter hunts (2017) -- Need to check PCFGDesignated calculations  
             print *, "PCFGDesignated .EQ. ABL(IYR)" 
@@ -813,7 +817,7 @@ C         Landing Block quota (TotalLands) exceeded?
           END DO
 
           IF (TotalLands.EQ.20) THEN        ! Left over from 2012 plan, which had limit on block landings
-            Reason(IYR) = 5                  ! Should not get here for 2017 alternating season plan
+            Reason(IYR) = 20                  ! Should not get here for 2017 alternating season plan
             call debug(N, IYR, "TotalLands = 20. Shouldn't be here")  ! Catch error for 2017
             GOTO 555  ! Exit looping over strikes
           ENDIF 
@@ -823,7 +827,7 @@ C         Stop SUMMER harvest if any single whale is landed
 C         This chunk replaced the 2012 code of five whales landed 
           IF (winter_season .NEQV. .TRUE.) THEN  ! Summer / Spring hunt year
             IF (Landed(IYR).EQ.1) THEN           ! Limit of one landed during summer hunt
-              Reason(IYR) = 2
+              Reason(IYR) = 4
               GOTO 555  ! Exit looping over strikes
             ENDIF
           END IF
