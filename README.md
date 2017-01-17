@@ -1,8 +1,6 @@
-# MakahGW
+# MakahGW: Management Strategy Evaluation of alternating seasonal hunts for gray whales. 
 
-Management Strategy Evaluation of alternating seasonal hunts for gray whales. 
-
-Original Fortran source code provided courtesy of Andre E. Punt (Univ. of Washington) and Cherry Allison (IWC). That version of the code was used by the most recent Aboriginal Whaling Management Procedure Working Group Gray Whale Implementation Review, as presented to the Scientific Committee of the International Whaling Commission. 
+Original Fortran source code provided courtesy of Andre E. Punt (Univ. of Washington) and Cherry Allison (IWC). That version of the code was used by the most recent Aboriginal Whaling Management Procedure Working Group Gray Whale Implementation Review, as presented to the Scientific Committee of the International Whaling Commission (J Cet Res Manage. 2013. Suppl Annex E). 
 
 This repository is a fork off the 2012 version of the code. The base of the master branch (i.e. the version of files used for the 2012 runs) can be accessed through `git` by cloning this repository and reverting to the first commit (SHA1 80f57d2).    
 
