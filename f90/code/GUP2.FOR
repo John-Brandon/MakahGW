@@ -187,12 +187,6 @@ C     Three year delay between a survey be conducted and being used
 C      WRITE(*,*) 2010+IYR,2010+IY,SIGHT(IY)
       NMIN = SIGHT(IY)/EXP(0.842*SQRT(LOG(1+CVX(IY)**2.0)))
       ABL = NMIN * 0.5 * R_MAX * F_R
-! DEBUGGING JRB
-      print *, "Hello from SLCPFCG"
-      print *, "SIGHT(IY)", SIGHT(IY)
-      print *, "CVX(IY)", CVX(IY)
-      print *, "NMIN", NMIN
-      print *, "PBR", ABL     
       ABL = MAX(0.0d0,MIN(NEED,ABL))
       print *, "ABL = MAX(0.0d0,MIN(NEED,ABL))", ABL      
 C
