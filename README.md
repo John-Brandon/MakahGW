@@ -6,15 +6,29 @@ Original Fortran source code provided courtesy of Andre E. Punt (Univ. of Washin
 
 This repository is a fork off the 2012 version of the code. The base of the master branch (i.e. the version of files used for the 2012 runs) can be accessed through `git` by cloning this repository and reverting to the first commit (SHA1 80f57d2).    
 
+The developmental version of the code by JRB is on a parrallel branch named, `alt_sla` (c.f. the `master` branch). A flow diagram for this SLA is provided below. For comparison:  
+
+1. The Strike Limit Algorithm for this hunt is based on an alternating season hunt strategy (e.g. odd years hunt in winter with max strike of 3, even years in summer with max strike 2).
+
+2. There are several additional differences between the developmental SLA and that from 2012, including:
+	  1.  An absence of block quotas for the PCFG stock.
+	  2.  The summer hunt is stopped if one whale is landed. 
+	  3.  The annual PCFG Strike Limit can not be greater than ABL = PBR - HCM. 
+	      where:  HCM = Human Caused Mortality (non-hunting, and set equal to 0.40) 
+	              PBR = N_MIN * 0.5 * R_MAX * F_R
+		      N_MIN = 40th percentile of abundance estimate with log-normal sampling error.
+		      R_MAX = 0.062 (Carretta et al. 2015. U.S. Pacific Marine Mammal Stock Assessments)
+		      F_R   = 0.50 for undetermined status relative to the Optimum Sustainable Population level under the U.S. MMPA (Carretta et al. 2015. U.S. Pacific Marine Mammal Stock Assessments)
+
+<p align="center">
+  <img src="./figs/FlowChart.png" width="550" align="center" title="Makah Alternating Season Strike Limit Algorithm">
+</p>
+
 ## Project notes: 
 
 1. Results from the the version of the code obtained from AEP have been checked against those reported during 2012 and found to be identical.    
 
-2. The developmental version of the code by JRB is on a parrallel branch named, `alt_sla` (c.f. the `master` branch). 
-     1. The Strike Limit Algorithm for this hunt is based on an alternating season hunt strategy (e.g. odd years hunt in winter with max strike of 3, even years in summer with max strike 2).
-     2. There are several differences between the developmental SLA and that from 2012, including but not limited to an absence of block quotas for the PCFG stock. 
-
-3. Reasons and corresponding IDs for stopping the hunt (see also the `Reason` vector in code):
+2. Reasons and corresponding IDs for stopping the hunt (see also the `Reason` vector in code):
      1. 2 strikes total during summer hunt year.
      2. 3 strikes total during winter/spring hunt year. 
      3. PCFG strike limit (ABL) reached.
