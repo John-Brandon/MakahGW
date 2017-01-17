@@ -5,6 +5,9 @@
 library(tidyverse)
 library(stringr)
 
+# Load helper functions 'Process' and 'AWExtract'
+source(file = ".R/AWTables.R")
+
 # Read results from 2012 and select only "SLA 1" (Dec - Apr hunt)
 #  Also only select 'final' depleption category (else repetition in trial list)
 results_2012 = read_csv(file = "./tables/Table_A1_JCRM_2013.csv") %>% 
@@ -33,8 +36,9 @@ system(command = "rm ./f90/Project/AW-ALL.OUT")
 # sys	0m49.404s
 system(command = "chmod a+x ./bash/runset_check.sh")
 system(command = "cd ./bash; ./runset_check.sh")
+system(command = "cp AW-ALL.OUT AW-ALL-CHECK-AGAINST-JCRM-2013.OUT")
 
-# Replace leading letter "G" in vector of trial names
+# Introduce leading letter "G" in vector of trial names
 trials_check = trials_2012 %>%  vapply(., function(x) paste0("G", x), 
                         FUN.VALUE="character", USE.NAMES = F)
 
