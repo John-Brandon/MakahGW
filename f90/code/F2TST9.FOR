@@ -132,7 +132,7 @@ C --------------------------------------------------------------------
      +      DeltaHistPCFG,DeltaHistSOUTH,DeltaFutPCFG
       DOUBLE PRECISION PHIHISTPCFG,PHIHISTSOUTH,PHIFUTPCFG,
      +      ProbFalseNeg,ProbFalsePos1,ProbFalsePos2,
-     +      FracObs,ProbStrk,
+     +      FracObs,ProbStrk, PropPCFG
      +      DeltaHistPCFG,DeltaHistSOUTH,DeltaFutPCFG
       INTEGER ABL(-100:99),Reason(-100:99),MonthHarvest,
      +      Landed(-100:100),Strikes(-100:100),StruckLost(-100:100),
@@ -462,13 +462,13 @@ C TRIALS BEGIN ---------------------------------------------------------
 C
 
 ! DEBUGGING JRB
-			print *, "Starting Trials"
-			print *, ""
+      print *, "Starting Trials"
+      print *, ""
 			
       DO 200 N = 1,NTRIAL
 
 C Display progress bar for simulations
-  			call progress_bar(N, NTRIAL)     						
+        call progress_bar(N, NTRIAL)     						
 				
 C
 C       Reset parameters and reseed the random number generators
@@ -489,19 +489,19 @@ C
 C       Age structured model.  
 C       MSYPAR sets A1 & Z, SETKA sets PMATF & PSURV for IYR=IYRPRJ,-1
 C       MSYP2 sets MSYL and MSYR in terms of other population components
-        DO 201 IS = 1,2
-         CALL MSYPAR(OK,IS)
-         CALL MSYP2 (MSYL1,MSYLM,MSYLE,MSYR1,MSYRM,MSYRE,IS)
+        DO 201 IS = 1, 2
+          CALL MSYPAR(OK,IS)
+          CALL MSYP2 (MSYL1,MSYLM,MSYLE,MSYR1,MSYRM,MSYRE,IS)
 201     CONTINUE    
      
-        DO 1011 IS = 1,2
-         CALL SETKA (KN(IS,N),PN(IS,N),PHIT(IS),OK,IS,IYRMAN)
+        DO 1011 IS = 1, 2
+          CALL SETKA (KN(IS,N),PN(IS,N),PHIT(IS),OK,IS,IYRMAN)
 1011    CONTINUE         
 C
 C       Compute the expected survey estimates
         CALL ComputePSURVObs(INITYR,FracObs)
-        DO 1014 IYR = IYRPRJ,-1
-         CALL ComputePSURVObs(IYR,FracObs)
+        DO 1014 IYR = IYRPRJ, -1
+          CALL ComputePSURVObs(IYR,FracObs)
 1014    CONTINUE     
     
         KNObs(1) = PSurvOBS(1,INITYR)
@@ -517,31 +517,31 @@ C       Update to year 0
         IYR=-1
 C       Call DATGEN to reset parameters and, if ISIGHT(-1)=1 to generate
 C       the last premanagement survey estimate, SIGHT(-1), & its CV
-        DO 1013 IS = 1,2
-         CALL DATGEN (SIGHT(IS,IYR),CVX(IS,IYR),1,
-     +      PSURVObs(IS,IYR),KNObs(IS),BIAS(IS,IYR),ISIGHT(IS,IYR),
-     +      PHIT(IS),IS, N, IYR)
-1013    CONTINUE     
+        DO IS = 1, 2
+          CALL DATGEN (SIGHT(IS,IYR),CVX(IS,IYR),1,
+     +       PSURVObs(IS,IYR),KNObs(IS),BIAS(IS,IYR),ISIGHT(IS,IYR),
+     +       PHIT(IS),IS, N, IYR)
+        END DO     
 
 C       Advance population to IYR=0
-        DO 1012 IS = 1,2
-         CALL STKUPA (IYR,CATCHM(IS,IYR),CATCHF(IS,IYR),OK,IS,IYRMAN)
-1012    CONTINUE     
+        DO IS = 1, 2
+          CALL STKUPA (IYR,CATCHM(IS,IYR),CATCHF(IS,IYR),OK,IS,IYRMAN)
+        END DO     
     
         CALL ComputePSURVObs(0,FracObs)
 				
 C       Check that target was achieved and print out new parameters
         IF (ABS(PHIT(1)-PTARGN(1,N)).GT.8.D0) THEN
-					PRINT *, ""        
+			PRINT *, ""        
         	PRINT *, "Trial Number: ", N
-					WRITE(*,*) ' Target popln 1 not hit',PHIT(1),PTARGN(1,N)
-				END IF	
+			WRITE(*,*) ' Target popln 1 not hit',PHIT(1),PTARGN(1,N)
+		END IF	
         
         IF (ABS(PHIT(2)-PTARGN(2,N)).GT.8.D0) THEN
-					PRINT *, ""        
+			PRINT *, ""        
 	        PRINT *, "Trial Number: ", N
-					WRITE(*,*) ' Target popln 2 not hit',PHIT(2),PTARGN(2,N)
-     		END IF
+			WRITE(*,*) ' Target popln 2 not hit',PHIT(2),PTARGN(2,N)
+     	END IF
 				     
         WRITE (IOUT,'(/''Trial:'',I4,A10,4I8 / 12X,
      +   2(''MSY'',3(A,2F8.5,4X)))') N,'Seeds:',
@@ -604,14 +604,14 @@ C            Ensure 0 <= NEWQ <= NEED
 
           if (mod_yr == 0) then
             winter_season = .TRUE.  ! Winter hunt
-            MonthHarvest = 4
+            MonthHarvest = 4        ! Legacy from 2012 computations, but makes life easier below. 
 		    NEED(2,IYR) = 3         ! PCFG Need = max Winter strikes
 !           PCFGCASE = 1            
 !           PhiFutFCFG = PhiFutPCFG  ! PCFG availability = Trial specified       
 !           DeltaFutPCFG = DeltaFutPCFG
           else 
             winter_season = .FALSE.  ! Summer hunt
-            MonthHarvest = 5         
+            MonthHarvest = 5         ! MonthHarvest is used to allocate strikes to stock
             NEED(2,IYR) = 2          ! PCFG Need = max Summer strikes
 !           PCFGCASE = 3             
 !           PhiFutPCFG = 1.d0        ! PCFG availability = 100%         
@@ -631,29 +631,34 @@ C         this year for use in IYRQ (if NEED(2,IYR)>0, IYR=0)
 C
 C           Call SLC (subsistence limit calculation) to set the block quota.		
             IF (MANAGE.EQ.' ') THEN            ! Base case 
-              NVAL = NEEDI / DBLE(IQUOTA(2))  ! At present, block iquota (= 1) set every year for PCFG
+              NVAL = NEEDI / DBLE(IQUOTA(2))   ! At present, block iquota (= 1) set every year for PCFG
 
 ! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-              print *, ""
+              print *, "-----------------------------------------------"
               print *, "IYR", IYR
-              print *, "IQOUTA(2)", IQUOTA(2)  ! CHECK THIS IS DURATION OF PCFG BLOCK QUOTA
+              print *, "winter_season:", winter_season
+!              print *, "NVAL", NVAL  ! Block NEED divided by Block lenght = annual quota under block
+              print *, "NEEDI", NEEDI
+!              print *, "IQOUTA(2) Duration of PCFG Block", IQUOTA(2)  ! CHECK THIS IS DURATION OF PCFG BLOCK QUOTA
 !              print *, "NYEAR", NYEAR  ! NYEAR = 100
-              print *, "ABL(IYR)", ABL(IYR)
+!              print *, "ABL(IYR)", ABL(IYR)
+              print *, "-----"
               print *, "CALLING SLCPFCG"
 ! Strike Limit Control (SLC) returns variable ABLV for ABL value (equal to PBR). 							 
               CALL SLCPFCG (CATM,CATF,SIGHT,CVX,IYRQ,ICAT1,ISUR1,
      +               NEEDI, NEWQ2,NSIM,IQUOTA(1),ABLV)
-              print *, "ABLV", ABLV
+!              print *, "ABLV", ABLV
 
 !   Subtract incidental human caused mortality from PBR for PCFG
               ABLV = ABLV - HCM
+              print *, "ABLV = ABLV - HCM", ABLV
+              print *, "-----"
 
 C             Ensure 0 <= NEWQ <= NEED 
-              print *, "MIN(ABLV, NVAL)", MIN(ABLV, NVAL)
               ABLV = INT(MAX(0.D0, MIN(ABLV,NVAL)))
               print *, ""
-              print *, "ABLV reset"
-              print *, "NVAL", NVAL  ! NVAL is set to NEED(2,IYRQ) the seasonal strike limit
+              print *, "ABLV rounded down:"
+              print *, "INT(MAX(0.D0, MIN(ABLV, NVAL)))"
               print *, "ABLV", ABLV
 C
               if (N.eq.1 .and. IYR.ge.10) then
@@ -676,48 +681,48 @@ C
           ENDIF					
 C
 C         DATGEN sets abundance estimate and CV in IYR if ISIGHT=1: Section B1				
-          DO 1099 IS = 1,2
-           CALL DATGEN (SIGHT(IS,IYR),CVX(IS,IYR),0,
-     +       PSURVObs(IS,IYR),KNObs(IS),BIAS(IS,IYR),ISIGHT(IS,IYR),
-     +       PHIT(IS),IS, N, IYR)
-1099      CONTINUE     
+          DO IS = 1, 2
+            CALL DATGEN (SIGHT(IS,IYR),CVX(IS,IYR),0,
+     +        PSURVObs(IS,IYR),KNObs(IS),BIAS(IS,IYR),ISIGHT(IS,IYR),
+     +        PHIT(IS),IS, N, IYR)
+          END DO     
 
 ! NORTH: Allocate quota over time block 					
 C         If NEED>0 the new quota will be applied this year for IQUOTA years
           IF (NEED(1,IYR).GT.0D0) THEN
-           CATCHQ = NEWQ
+            CATCHQ = NEWQ
 C          Store values for next IQUOTA(1) years
-           DO 50 I=IYR,MIN(IYR+IQUOTA(1)-1,NYEAR-1)
-            CATM(1,I) = CATCHQ * CRATIO(1)
-            CATF(1,I) = CATCHQ - CATM(1,I)
-            CATCHM(1,I) = CATM(1,I)
-            CATCHF(1,I) = CATF(1,I)
-   50      CONTINUE
+            DO I = IYR,MIN(IYR+IQUOTA(1)-1,NYEAR-1)
+              CATM(1,I) = CATCHQ * CRATIO(1)
+              CATF(1,I) = CATCHQ - CATM(1,I)
+              CATCHM(1,I) = CATM(1,I)
+              CATCHF(1,I) = CATF(1,I)
+            END DO
           ENDIF
-! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 ! PCFG: Allocate quota over time block					
 C         If NEED>0 the new quota will be applied this year for IQUOTA(2) years
           IF (NEED(2,IYR).GT.0D0) THEN
-           LASTPCFGNEED = NINT(NEED(2,IYR)/FLOAT(IQUOTA(2)))
+            LASTPCFGNEED = NINT(NEED(2,IYR)/FLOAT(IQUOTA(2)))  ! NINT Rounds to nearest number 
 C          Store values for next IQUOTA(2) years
-           DO 51 I=IYR,MIN(IYR+IQUOTA(2)-1,NYEAR-1)
-             ABL(I) = ABLV
-   51      CONTINUE
+            DO I=IYR,MIN(IYR+IQUOTA(2)-1,NYEAR-1)
+              ABL(I) = ABLV
+            END DO
           ENDIF
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!          
 C
 C         Specify the probability of false negatives. If surveys only occur every
 C         five years we need to adjust this probability
           ProbFalseNegUsed = ProbFalseNeg
           IF (IFREQ(2).NE.1) THEN
-           TOT1 = 0.0001
-           TOT2 = 0.0001
-           DO 53 L = 1,MaxAge
-            TOT1 = TOT1 + RF(2,L)+RM(2,L)+UNRM(2,L)+UNRF(2,L)
-            IF (L.GE.IFREQ(2))
-     +        TOT2 = TOT2 + RF(2,L)+RM(2,L)+UNRM(2,L)+UNRF(2,L)
-53         CONTINUE           
-           ProbFalseNegUsed = 1.0-TOT2/TOT1
+            TOT1 = 0.0001
+            TOT2 = 0.0001
+            DO L = 1,MaxAge
+               TOT1 = TOT1 + RF(2,L)+RM(2,L)+UNRM(2,L)+UNRF(2,L)
+               IF (L.GE.IFREQ(2)) THEN
+                 TOT2 = TOT2 + RF(2,L)+RM(2,L)+UNRM(2,L)+UNRF(2,L)
+               ENDIF
+            END DO           
+            ProbFalseNegUsed = 1.0 - TOT2 / TOT1
           ENDIF
 C
 C         Specify the probability of false positives.
@@ -729,11 +734,17 @@ C         Special feature implement the ABL
 ! NEXP looks approximately equal to 1+ stock abundance (see file = AW-RES)
 ! What is this? Catching PCFG extinctions?
           IF (NEXP(2,IYR) + DeltaFutPCFG * NEXP(1,IYR).GT.0) THEN
-           PropPCFG = NEXP(2,IYR) / 
-     +       (NEXP(2,IYR) + DeltaFutPCFG * NEXP(1,IYR))
+            PropPCFG = NEXP(2,IYR) / 
+     +        (NEXP(2,IYR) + DeltaFutPCFG * NEXP(1,IYR))
+              call debug(N, IYR, "line 739 ")
           ELSE
-           propPCFG = 0
-           GOTO 555  ! Exit looping over strikes
+            propPCFG = 0
+            print *, "DeltaFutPCFG", DeltaFutPCFG
+            print *, ""
+            print *, "NEXP(2,IYR)", NEXP(2, IYR)
+            print *, ""
+            ! call debug(N, IYR, "PropPCFG = 0 --------*")
+            GOTO 555  ! Exit looping over strikes
           ENDIF 
 C
 C         Set the various counters to zero
@@ -747,7 +758,7 @@ C         Set the various counters to zero
 556       CONTINUE      ! -----------------------------------------------------
 
 !  Check limits before a strike is allowed 
-C
+!
 !  This bit should be updated. During 2012 IR there was a limit to struck and 
 !  lost in the hunt plan. This is not true of the 2017 alternating season
 !  plan; the limit is on the number of strikes (irregardless of lost or landed). 
@@ -762,92 +773,121 @@ C
 !       This condition effectively implements the strike limit. 
           if (Strikes(IYR) .GE. NEED(2, IYR)) then
             Reason(IYR) = 1  ! Keep track of this reason for stopping hunt. 
+            call debug(N, IYR, "Strikes equal to need.")  ! Catch error for 2017
             GOTO 555         ! Proceed to next year's hunt.
           end if
 
 !          2012 (old) rule
 C         Stop harvest: struck and lost hits 3
-!          Alternating Season hunt plan has no explicit limits on lost or landed, just strikes.
+!          Alternating Season hunt plan has no explicit limits on struck and lost. Just strikes and/or landed.
 !          IF (StruckLost(IYR).EQ.3) THEN
 !           Reason(IYR) = 1
 !           GOTO 555  ! Exit looping over strikes
 !          ENDIF 
 
+! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 C
 C         Stop harvest: PCFG Mortality Limit (ABL) has been reached
 !  Note that ABL is declared and treated as an integer value. 
-          IF (PCFGDesignated(IYR).EQ.ABL(IYR)) THEN
-           Reason(IYR) = 3
-           GOTO 555  ! Exit looping over strikes
+!  Specifically, ABL(IYR) = ABLV rounded down to floor integer.
+!  PCFGDesignated is set below in the if/then statement for StruckAndLost
+          IF (PCFGDesignated(IYR).EQ.ABL(IYR)) THEN  ! PCFGDesignated set below
+            Reason(IYR) = 3 
+! Struck and lost assumed to be PCFG in summer hunts (2017)
+! Struck and lost assumed 0.3 of a PCFG whale in winter hunts (2017) -- Need to check PCFGDesignated calculations  
+            print *, "PCFGDesignated .EQ. ABL(IYR)" 
+            call debug(N, IYR, "Check delta btwn seasonal availability")
+            GOTO 555  ! Exit looping over strikes
           ENDIF 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 C
-C         Landing Block quota exceeded?
+C         Landing Block quota (TotalLands) exceeded?
 !   Don't believe this is needed for 2017 alternating season plan, which is not limited 
 !   by numbers of landed whales (only ABL and max strikes). Would still be good to keep
 !   the tally of landed whales, but don't need the control statements for stopping
 !   the hunt or keeping track of how many times hunt was stopped after landing XX whales. 
-          BLOCKSTART = MAX(0,INT(IYR/5)*5)
-          TotalLands = 0
-          DO 557 IYR2 = BlockStart,IYR
-           TotalLands = TotalLands + Landed(IYR2)
-557       CONTINUE
+          BLOCKSTART = MAX(0,INT(IYR/5)*5)  ! Blockstart = IYR
+          TotalLands = 0                    ! Re-initialize landings for this quota block to zero.
+          DO IYR2 = BlockStart, IYR         ! Increment total numbers landed for this quota block 
+            TotalLands = TotalLands + Landed(IYR2)  ! TotalLands for 2017 seasonal hunt should be annual sum  
+          END DO
 
-          IF (TotalLands.EQ.20) THEN
-           Reason(IYR) = 5
-           GOTO 555  ! Exit looping over strikes
+          IF (TotalLands.EQ.20) THEN        ! Left over from 2012 plan, which had limit on block landings
+            Reason(IYR) = 5                  ! Should not get here for 2017 alternating season plan
+            call debug(N, IYR, "TotalLands = 20. Shouldn't be here")  ! Catch error for 2017
+            GOTO 555  ! Exit looping over strikes
           ENDIF 
 
 C
-C         Stop harvest: landed whales hits 5
-          IF (Landed(IYR).EQ.5) THEN
-           Reason(IYR) = 2
-           GOTO 555  ! Exit looping over strikes
-          ENDIF
+C         Stop SUMMER harvest if any single whale is landed
+C         This chunk replaced the 2012 code of five whales landed 
+          IF (winter_season .NEQV. .TRUE.) THEN  ! Summer / Spring hunt year
+            IF (Landed(IYR).EQ.1) THEN           ! Limit of one landed during summer hunt
+              Reason(IYR) = 2
+              GOTO 555  ! Exit looping over strikes
+            ENDIF
+          END IF
 C
+! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 C         Stop harvest: strike limit has been reached
-          IF (Strikes(IYR).EQ.NINT(LASTPCFGNEED)) THEN
-           Reason(IYR) = 4
-           GOTO 555  ! Exit looping over strikes
-          ENDIF 
+!        This seems redundant with Reason 1, because strike limit and NEED are set equal at present. 
+!          print *, "LASTPCFGNEED", LASTPCFGNEED
+!          IF (Strikes(IYR).EQ.NINT(LASTPCFGNEED)) THEN
+!            Reason(IYR) = 4
+!            call debug(N, IYR, "Strike Limit has been reached")  ! Debugging JRB
+!            GOTO 555  ! Exit looping over strikes
+!          ENDIF 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 C
-! Limits have been checked ----------------------------------------------------
-C         Harvest continues - strike a whale and decide if it PCFG
+C         Limits have been checked -----------------------------------------------
+C         Hunting may proceed - strike a whale and decide if it PCFG
+C
           RAND = RAN1(ISEED5,MA5,INEXT5,INEXTP5)
           
-          IF (RAND.LT.PropPCFG) THEN
-           CATPCFG = CATPCFG + 1 
-           ProbDetect = (1-ProbFalseNegUsed)
+          IF (RAND. LT. PropPCFG) THEN
+            CATPCFG = CATPCFG + 1 
+            ProbDetect = (1-ProbFalseNegUsed)
           ELSE
-           CATNORTH = CATNORTH + 1 
-           ProbDetect = ProbFalsePosUsed
+            CATNORTH = CATNORTH + 1 
+            ProbDetect = ProbFalsePosUsed
           ENDIF
-          Strikes(IYR) = Strikes(IYR) + 1
+
+          print *, "-----"
+          print *, ""
+          print *, "Strikes(IYR)", Strikes(IYR)
+          print *, "Limits have been checked"
+          print *, "Adding one to strike tally"
+          Strikes(IYR) = Strikes(IYR) + 1  ! INCREMENT STRIKES FOR THIS YEAR
+          print *, "Strikes(IYR)", Strikes(IYR)
+          print *, ""
+
 C
 C         Decide if the whale was struck and lost									
+C
           RAND = RAN1(ISEED5,MA5,INEXT5,INEXTP5)
 					          
-          IF (RAND.LT.ProbStrk) THEN
-           StruckAndLost = .TRUE.
-           StruckLost(Iyr) = StruckLost(Iyr) + 1
+          IF (RAND. LT. ProbStrk) THEN
+            StruckAndLost = .TRUE.
+            StruckLost(Iyr) = StruckLost(Iyr) + 1
           ELSE
-           StruckAndLost = .FALSE.
+            StruckAndLost = .FALSE.
           ENDIF
 C
 C         Rules differs depend on whether the animals was struck and lost -------
-          IF (StruckAndLost) THEN
 C
+          IF (StruckAndLost) THEN
 C           Struck & Lost in Winter / Spring hunt: 
 !             This treatment differs from 2012 Hunt Plan, which assumed
 !           that struck and lost whales in winter / spring were only from the 
 !           northern stock (in practice, the resulting north mortality rate ignored).
 !             For the alternating season hunt plan, struck and lost whales during
-!           winter/spring count against ABL in proportion to PCFG availability,
+!           winter/spring count against (PCFG Mortality Limit) ABL in proportion to PCFG availability,
 !           PhiFutPCFG = 0.3 (base case). 
-            IF (MonthHarvest.EQ.4) THEN
+            IF (MonthHarvest. EQ. 4) THEN
               RAND = RAN1(ISEED5, MA5, INEXT5, INEXTP5)
-              if (RAND .LT. PhiFutPCFG) then
+              IF (RAND .LT. PhiFutPCFG) THEN
                 PCFGDesignated(IYR) = PCFGDesignated(IYR) + 1
-              end if
+              ENDIF
             ENDIF
 C
 C           Struck & Lost in Summer hunt [counts as PCFG]
@@ -855,45 +895,47 @@ C           Struck & Lost in Summer hunt [counts as PCFG]
               PCFGDesignated(IYR) = PCFGDesignated(IYR) + 1
             ENDIF
 C
-C           Special case
+C           Special case - ACCOUNTING FOR MAY (2012). CAN GET RID OF THIS I THINK -JRB
             IF (MonthHarvest.GE.99) THEN
+              call debug(N, IYR, "Error: MonthHarvest.GE.99")
               NumBeforeMay = PCFGCASE-20
 C             IF (StruckLost(Iyr).GT.NumBeforeMay) THEN
-              IF (Strikes(Iyr).GT.NumBeforeMay) THEN
+              IF (Strikes(IYR). GT. NumBeforeMay) THEN
                 PCFGDesignated(IYR) = PCFGDesignated(IYR) + 1
               ENDIF
             ENDIF
 C
           ELSE
-C
 C           Landed - now match against catalogue ---------------------------------
-            Landed(IYR) = Landed(IYR) + 1
+             Landed(IYR) = Landed(IYR) + 1
 C
 C           Is Detected?
-            RAND = RAN1(ISEED5,MA5,INEXT5,INEXTP5)
-            IF (RAND.LT.ProbDetect) 
-     +        PCFGDesignated(IYR) = PCFGDesignated(IYR) + 1
-C     
+             RAND = RAN1(ISEED5,MA5,INEXT5,INEXTP5)
+             IF (RAND. LT. ProbDetect) THEN
+               PCFGDesignated(IYR) = PCFGDesignated(IYR) + 1
+             END IF
            ENDIF       
 C          
           GOTO 556  ! Strike taken, loop to next potential strike 
+
+! DO WHILE (limit_reached .NEQV. .TRUE.)  ! GOTO statements act like DO WHILE
 555       CONTINUE  ! Limit reached, proceed with accounting etc.        
 	
 C
-C         Record catches (they are taken in PCFG Area in Dec-May)
-          CATM(2,IYR) = (CATPCFG+CATNORTH) * CRATIO(2)
+C        Record total catches by sex that are taken in PCFG Area 
+          CATM(2,IYR) = (CATPCFG+CATNORTH) * CRATIO(2)  ! CRATIO = Sex ratio (males)  of future catches (area J)
           CATF(2,IYR) = (CATPCFG+CATNORTH) * (1-CRATIO(2))
 C
-C         Add to the catches from the north stock
+C        Add to the catches from the north stock
           CATCHM(1,IYR) = CATCHM(1,IYR) + CATNORTH * CRATIO(2)
           CATCHF(1,IYR) = CATCHF(1,IYR) + CATNORTH * (1-CRATIO(2))				          
 C
-C         Add to the catches from the north stock
+C        Add to the catches from the PCFG stock
           CATCHM(2,IYR) = CATPCFG * CRATIO(2)
           CATCHF(2,IYR) = CATPCFG * (1-CRATIO(2))
 
-C         Advance stock to next year, ie remove catch & set PMATF(IYR+1).
-C         If quota CATCHQ > recruited population then it is reset in STKUPA
+C        Advance stock to next year, ie remove catch & set PMATF(IYR+1).
+C        If quota CATCHQ > recruited population then it is reset in STKUPA
           DO 52 IS = 1,2
            CALL STKUPA (IYR,CATCHM(IS,IYR),CATCHF(IS,IYR),OK,IS,IYRMAN)
 52        CONTINUE           
@@ -904,12 +946,12 @@ C
 					
 100     CONTINUE  ! Loop to next year (IYR) for this trial ---------------------------					
 								
-C       Call REPORT to print out PMATF & CATCHM in year IYR
+C      Call REPORT to print out PMATF & CATCHM in year IYR
         CALL REPORT (IOUT,NYEAR,SIGHT,CVX,ISUR1,CATM,CATF,IYRMAN)
 				
   200 CONTINUE  ! Loop to next trial (N) ---------------------------					
 
-C Print filler lines before next trial (if running a batch)
+C      Print filler lines before next trial (if running a batch)
 			print *, ""
 			print *, ""
 			print *, "--"
@@ -927,7 +969,7 @@ C Print filler lines before next trial (if running a batch)
 
 C ----------------------------------------------------------------------
 C ----------------------------------------------------------------------
-			subroutine progress_bar(iteration, maximum)
+		subroutine progress_bar(iteration, maximum)
 !
 ! Prints progress bar.
 !
@@ -951,10 +993,10 @@ C ----------------------------------------------------------------------
         integer :: idiv, ibin
         real :: div, bin  
 
-				div = 5.d0
-				idiv = nint(div)				
-				bin = 20.d0
-				ibin = nint(bin)
+		div = 5.d0
+		idiv = nint(div)				
+		bin = 20.d0
+		ibin = nint(bin)
 				
         step = nint(iteration * 100 / (1.0 * maximum))
         done = floor(step / div)  ! mark every 5% (done ranges from 1-20)
@@ -984,7 +1026,7 @@ C ----------------------------------------------------------------------
         write(6,'(a)',advance='no') '] '
         write(6,'(I3.1)',advance='no') step        
         write(6,'(a)',advance='no') '%'
-			end subroutine progress_bar
+	  end subroutine progress_bar
 
 C ----------------------------------------------------------------------
 C ----------------------------------------------------------------------
@@ -3051,3 +3093,27 @@ C     REPORT prints out population size & catch arrays from year 0
       END
 
       
+C *********************************************************************
+
+      SUBROUTINE debug(trial, year, msg)
+      ! Print output for debugging and stop execution
+      ! The argument 'msg' should correspond to the nine characters "line ####"
+      ! John R Brandon
+        use DECL_PCFG  ! Variables from 2012
+        use ALT_PCFG   ! "            " 2017
+
+        implicit none
+
+        integer(kind = 4) :: trial, year
+        character(9) :: msg
+
+        print *, ""
+        print *, "Inside debug()"
+        print *, msg
+        print *, "Trial: ", trial
+        print *, "IYR  : ", year
+        print *, ""
+        stop  
+
+        RETURN
+      END
