@@ -49,24 +49,18 @@ Where:
 1. Previously, the original set of Fortran code files were compiled using F2-gup2.FOR, which simply contains a list of "INCLUDE" statements for each \*.FOR file to be compiled into the executable.   
 
 2. As an alternative to the use of "INCLUDE" statements, see the `Makefile`. This uses a "MODULAR" approach to compiling, wherein, each \*.FOR code file is compiled first into an object \*.o file. The object files are then linked during the step of compiling the executable. Compiling individual object files can take advantage of GNU Make's strengths, i.e. only modified code files are recompiled when linking the executable. In contrast, the "Include" approach compiles the entire file set indiscriminantly.
-     1. An option has been added to the `Makefile` to run individual trials with the `make run` command.
-     2. See "Examples from the command line" below for an example of compiling with the `make` command in Bash.
 
 ### Compiling
 ``` shell
 cd ~/MakahGW      # make sure you are at top of project directory 
-make              # compile Fortran 90 code into executable (see Makefile)
+make              # compile Fortran 90 code into executable (see targets and dependencies in Makefile)
 ``` 
 
 ### Run a single trial
 ``` shell
-cd ./f90/Project    # location of executable
-chmod a+x main.app  # only needed first time, but you may need to run as 'sudo chmod ...'
-./main.app          # run executable for a single trial (input file, copy.dat)
-
-### Alternatively, after you've run chmod (change mode) on main.app
-cd ~/MakahGW
-make run            # useful tool for debugging
+chmod a+x ./f90/main.app  # only needed first time, but you may need to run as 'sudo chmod ...'
+make run                  # An option has been added to the `Makefile` to run individual trials with the `make run` command
+                          # useful tool for debugging  
 ```
 
 ### Run a batch of many trials
@@ -74,7 +68,7 @@ make run            # useful tool for debugging
 ``` shell
 cd ~/MakahGW/bash           # where more of the magic happens
 chmod a+x run.sh runset.sh  # grant these scripts execute privelage. see comment above re: 'sudo chmod ...' 
-./runset.sh                 # try with a small set first (e.g. say 4 trials), 
+./runset.sh                 # recommend running with a small  set first (e.g. say 4 trials), 
                             # before moving onto the full set (72 trials and ~48 mins on 2016 MacBook Pro)
 ```
 
