@@ -11,6 +11,7 @@ The developmental version of the code by JRB is on a parrallel branch named, `al
 </p>
 
 There are several differences between this SLA and that from 2012, including:
+
 1. A winter/spring hunt occurs during even numbered years. The strike limit maximum is 3 gray whales total regardless of stock.
 2. During odd years, a summer hunt occurs. All summer strikes are assumed to be PCFG whales. 
 3. The summer hunt is stopped if either: (a)  one whale is landed, or (b) there are two strikes, or (c) the Strike Limit for PCFG whales is reached (struck and lost whales are counted as deaths regardless of season).
