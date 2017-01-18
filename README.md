@@ -10,20 +10,18 @@ The developmental version of the code by JRB is on a parrallel branch named, `al
   <img src="./figs/FlowChart.png" width="800" align="center" title="Makah Alternating Season Strike Limit Algorithm">
 </p>
 
-Both winter/spring and summer hunts are regulated by the PCFG Strike Limit (aka the `ABL`).
-
 There are several differences between this SLA and that from 2012, including:
-1.  A winter/spring hunt occurs during even numbered years. The strike limit maximum is 3 gray whales total regardless of stock.
-2.  During odd years, a summer hunt occurs. All summer strikes are assumed to be PCFG whales. 
-3.  The summer hunt is stopped if either: (a)  one whale is landed, or (b) there are two strikes, or (c) the Strike Limit for PCFG whales is reached (struck and lost whales are counted as deaths regardless of season).
-3.  The alternating season hunt does not have a block quota, e.g. 5yr limit on landed whales.
-3.  The annual PCFG Strike Limit in both seasons is calculated as `ABL = PBR - HCM`.  
+1. A winter/spring hunt occurs during even numbered years. The strike limit maximum is 3 gray whales total regardless of stock.
+2. During odd years, a summer hunt occurs. All summer strikes are assumed to be PCFG whales. 
+3. The summer hunt is stopped if either: (a)  one whale is landed, or (b) there are two strikes, or (c) the Strike Limit for PCFG whales is reached (struck and lost whales are counted as deaths regardless of season).
+4. The alternating season hunt does not have a block quota, e.g. 5yr limit on landed whales.
+5. The annual PCFG Strike Limit in both seasons is calculated as `ABL = PBR - HCM`.  
 Where:  
-* `HCM`   = Human Caused Mortality (non-hunting, and set equal to 0.40). The ABL from 2012 did not subtract HCM from PBR. 
-* `PBR    = N_MIN * 0.5 * R_MAX * F_R`
-* `N_MIN` = 20th percentile of abundance estimate with log-normal sampling error (i.e. the lower bound of a 60% confidence interval).
-* `R_MAX` = 0.062 (Carretta et al. 2015. U.S. Pacific Marine Mammal Stock Assessments)
-* `F_R`   = 0.50 for undetermined status relative to the Optimum Sustainable Population level under the U.S. MMPA (Carretta et al. 2015. U.S. Pacific Marine Mammal Stock Assessments)
+  * `HCM`   = Human Caused Mortality (non-hunting, and set equal to 0.40). The ABL from 2012 did not subtract HCM from PBR. 
+  * `PBR    = N_MIN * 0.5 * R_MAX * F_R`
+  * `N_MIN` = 20th percentile of abundance estimate with log-normal sampling error (i.e. the lower bound of a 60% confidence interval).
+  * `R_MAX` = 0.062 (Carretta et al. 2015. U.S. Pacific Marine Mammal Stock Assessments)
+  * `F_R`   = 0.50 for undetermined status relative to the Optimum Sustainable Population level under the U.S. MMPA (Carretta et al. 2015. U.S. Pacific Marine Mammal Stock Assessments)
 
 <!--
 ## Project notes: 
@@ -81,7 +79,8 @@ chmod a+x run.sh runset.sh  # grant these scripts execute privelage. see comment
 
 ### __Run a batch of all trials from 2012__
 ```shell
-Rscript ./R/Tables_Check.R  # This R script will read the list of trials from 2012, write a Bash script for those and then run it.
+Rscript ./R/Tables_Check.R  #  This R script will read the list of trials from 2012, 
+                            # write a Bash script for those and then run it.
 ```
 
 ### Example ouput in terminal from single trial run
