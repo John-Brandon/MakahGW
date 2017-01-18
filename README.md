@@ -20,9 +20,9 @@ There are several differences between this SLA and that from 2012, including:
 Where:  
   * `HCM`   = Human Caused Mortality (non-hunting, and set equal to 0.40). The ABL from 2012 did not subtract HCM from PBR. 
   * `PBR    = N_MIN * 0.5 * R_MAX * F_R`
-  * `N_MIN` = 20th percentile of abundance estimate with log-normal sampling error (i.e. the lower bound of a 60% confidence interval).
-  * `R_MAX` = 0.062 (Carretta et al. 2015. U.S. Pacific Marine Mammal Stock Assessments)
-  * `F_R`   = 0.50 for undetermined status relative to the Optimum Sustainable Population level under the U.S. MMPA (Carretta et al. 2015. U.S. Pacific Marine Mammal Stock Assessments)
+    * `N_MIN` = 20th percentile of abundance estimate with log-normal sampling error (i.e. the lower bound of a 60% confidence interval).
+    * `R_MAX` = 0.062 (Carretta et al. 2015. U.S. Pacific Marine Mammal Stock Assessments).
+    * `F_R`   = 0.50 for undetermined status relative to the Optimum Sustainable Population level under the U.S. MMPA (Carretta et al. 2015).
 
 <!--
 ## Project notes: 
