@@ -2,12 +2,12 @@
 
 Original Fortran source code provided courtesy of Andre E. Punt (Univ. of Washington) and Cherry Allison (IWC). That version of the code was used for the most recent Gray Whale Implementation Review, as presented to the Scientific Committee of the International Whaling Commission (J Cet Res Manage. 2013. Suppl Annex E). 
 
-This repository is a fork off the 2012 version of the code. The base of this master branch (i.e. the version of files used for the 2012 runs) can be accessed through `git` by cloning this repository and reverting to the first commit (SHA1 80f57d2). Results from that version of the code have been checked against those reported during 2012 (JCRM 2013) and found to be identical.    
+This repository is a fork off the 2012 version of the code. The base of this master branch (i.e. the version of files used for the 2012 runs) can be accessed through `git` by cloning this repository and reverting to the first commit (SHA1 80f57d2). Results from that version of the code have been checked against those reported during 2012 (JCRM 2013 Suppl Annex) and found to be identical.    
 
 The developmental version of the code by JRB is on a parrallel branch named, `alt_sla` (c.f. the `master` branch). The Strike Limit Algorithm for this hunt is based on an alternating season hunt strategy. A flow diagram for this SLA is provided below. 
 
 <p align="center">
-  <img src="./figs/FlowChart.png" width="800" align="center" title="Makah Alternating Season Strike Limit Algorithm">
+  <img src="./figs/FlowChart_4x_12pt.png" width="800" align="center" title="Makah Alternating Season Strike Limit Algorithm">
 </p>
 
 There are several differences between this SLA and that from 2012, including:
