@@ -100,14 +100,18 @@ sla_all$trial = sla_all$trial %>%
 #
 # prepare data.frame for ggplotting --------------------------------------------
 #
-# This is the initial data.frame for testing plotting below
-delta_low5_final = sla_all %>% 
-  select(trial, sla, finalist, depl_cat, depl_5th_ptile) %>% 
-  filter(sla != "sla2_2012", depl_cat == "final")
-
 # Go from long to wide for ggplotting
-delta_low5_final = delta_low5_final %>% spread(key = sla, value = depl_5th_ptile) 
+# This is the initial data.frame for testing plotting below
+# delta_low5_final = sla_all %>% 
+#   select(trial, sla, finalist, depl_cat, depl_5th_ptile) %>% 
+#   filter(sla != "sla2_2012", depl_cat == "final")
+delta_low5_final = 
+  sla_all %>% 
+  select(trial, sla, finalist, depl_cat, depl_5th_ptile) %>% 
+  filter(depl_cat == "final") %>% 
+  spread(key = sla, value = depl_5th_ptile) 
 
+glimpse(delta_low5_final)
 
 
 

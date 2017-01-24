@@ -98,7 +98,7 @@ Process <- function(Output, OutFile, Trials, SLAs, Stats, Type=1){
     
   }
  
-AWExtract(ALL.eval, dat.path.eval, out.path.eval, SLAs=c(1:11))
+# AWExtract(ALL.eval, dat.path.eval, out.path.eval, SLAs=c(1:11))
 
 # ===============================================================================
 
@@ -135,49 +135,49 @@ AWExtract <- function(Trials, dat.path, Outfile, SLAs, Stats=1:11, Case="PCFG",T
 # Working with Preliminary results from Andre for Intersessional
 # setwd("/Users/johnbrandon/Documents/2012 Work/Makah/IWC 65/Intersessional/Prelim Results From Andre")
 
-setwd("/Users/johnbrandon/Documents/2013 Work/IWC.65/ENP.gray.whale")
-ddir = getwd()  # get current working directory
-
-###########################################################
-# get unique Trials (Andre has some different numbers than IWC 64)
-#  May 13, 2013 -- tabling results for draft report on SC request for more exact variant
-dat <- read.table(dat.path,sep="")
-names(dat)
-unique(dat$V1)
-
-GALL <- as.character(levels(unique(dat$V1))) # get re-numbered trials for IWC 65 
-dat.file = "AW-ALL-JB.txt"
-dat.path = paste(ddir, dat.file, sep="/"); dat.path
-Outfile = "ENP.GW.IWC65.AWMP.OUT.CSV"
-out.path = paste(ddir, Outfile, sep="/"); out.path
-AWExtract(GALL, dat.path, out.path, SLAs=c(1:8))
-system(paste("open ", Outfile, sep=""))
-
-titles[1] <- "SLA 1; All strikes in May"
-titles[2] <- "1 Strike before May"
-titles[3] <- "2 Strikes before May"
-titles[4] <- "3 Strikes before May"
-titles[5] <- "4 Strikes before May"
-titles[6] <- "5 Strikes before May"
-titles[7] <- "6 Strikes before May"
-titles[8] <- "SLA 2; All strikes before May"
-
-###########################################################
-
-# Try with only one trial and one SLA
-# Outfile = "Out.tmp.CSV"
-AWExtract(c("GB01C", "GB51A"), dat.path, out.path, SLAs=c(1:8))
-system(paste("open ", Outfile, sep=""))
-
-AWExtract(GBALL, dat.path, out.path, SLAs=c(1,2,3,4,5,6,7,9,11))
-system(paste("open ", Outfile, sep=""))
-
-# SLAs assuming PCFG availability = 100 %
-AWExtract(GBALL, dat.path, out.path, SLAs=c(3,6,9))
-system(paste("open ", Outfile, sep=""))
-
-AWExtract(GBALL, dat.path, out.path, SLAs=ALLSLA)
-system(paste("open ", Outfile, sep=""))
-
-#system(paste("open -e ", out.file, sep="")) # open with TextEdit (-e)
-system(paste("open ", out.file, sep="")) # open with TextEdit (-e)
+# setwd("/Users/johnbrandon/Documents/2013 Work/IWC.65/ENP.gray.whale")
+# ddir = getwd()  # get current working directory
+# 
+# ###########################################################
+# # get unique Trials (Andre has some different numbers than IWC 64)
+# #  May 13, 2013 -- tabling results for draft report on SC request for more exact variant
+# dat <- read.table(dat.path,sep="")
+# names(dat)
+# unique(dat$V1)
+# 
+# GALL <- as.character(levels(unique(dat$V1))) # get re-numbered trials for IWC 65 
+# dat.file = "AW-ALL-JB.txt"
+# dat.path = paste(ddir, dat.file, sep="/"); dat.path
+# Outfile = "ENP.GW.IWC65.AWMP.OUT.CSV"
+# out.path = paste(ddir, Outfile, sep="/"); out.path
+# AWExtract(GALL, dat.path, out.path, SLAs=c(1:8))
+# system(paste("open ", Outfile, sep=""))
+# 
+# titles[1] <- "SLA 1; All strikes in May"
+# titles[2] <- "1 Strike before May"
+# titles[3] <- "2 Strikes before May"
+# titles[4] <- "3 Strikes before May"
+# titles[5] <- "4 Strikes before May"
+# titles[6] <- "5 Strikes before May"
+# titles[7] <- "6 Strikes before May"
+# titles[8] <- "SLA 2; All strikes before May"
+# 
+# ###########################################################
+# 
+# # Try with only one trial and one SLA
+# # Outfile = "Out.tmp.CSV"
+# AWExtract(c("GB01C", "GB51A"), dat.path, out.path, SLAs=c(1:8))
+# system(paste("open ", Outfile, sep=""))
+# 
+# AWExtract(GBALL, dat.path, out.path, SLAs=c(1,2,3,4,5,6,7,9,11))
+# system(paste("open ", Outfile, sep=""))
+# 
+# # SLAs assuming PCFG availability = 100 %
+# AWExtract(GBALL, dat.path, out.path, SLAs=c(3,6,9))
+# system(paste("open ", Outfile, sep=""))
+# 
+# AWExtract(GBALL, dat.path, out.path, SLAs=ALLSLA)
+# system(paste("open ", Outfile, sep=""))
+# 
+# #system(paste("open -e ", out.file, sep="")) # open with TextEdit (-e)
+# system(paste("open ", out.file, sep="")) # open with TextEdit (-e)

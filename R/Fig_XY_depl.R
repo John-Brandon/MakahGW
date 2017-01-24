@@ -15,38 +15,43 @@ library(tidyverse) # ggplot2 + most anything else that might be needed in the ne
 
 rm(list = ls())    # Clear workspace
 
-# source("./R/Table_Check.R")  # "WARNING! ./bash/runset_all.sh LATELY? THIS COULD TAKE A WHILE "
+# source("./R/Table_Check.R")  # "WARNING! THIS COULD TAKE A WHILE. Sources ./bash/runset_all.sh"
 # Read 2012 depletion results and join into one data.frame with results from current trial batch
 source("./R/Join_Depletion_Tables.R")  
 
-#
-# ggplotting -------------------------------------------------------------------
-#
 # Source R code from: https://gist.github.com/John-Brandon/484d152675507dd145fe
 # Use package devtools to load plot theme code with `source_gist`
 source_gist(id = "484d152675507dd145fe", filename = "mytheme_bw.R")  
 
+#
+# ggplotting -------------------------------------------------------------------
+#
 plot_xy_depl = function(dat, xsla, ysla){
-  # Make this more general by processing data given function arguments. 
+  # `dat`` is a wide data.frame, with two of the columns named `xsla` and `ysla`.
+  # Those two columns contain a depletion statistic for the named 
+  # Strike Limit Algorithm
+  
+  # Process data given function arguments. 
   dat_plt = dat %>% select_("trial", "finalist", xsla, ysla) # , finalist, xsla, ysla)
   dat_labels = dat_plt %>% filter(finalist == TRUE)
-  glimpse(dat_plt)  # Check
-  glimpse(dat_labels)
 
-  # Parameters for plotting
+  # Parameters for plotting geom_text and labeling axes (given a comparison request)
   repel_force = 1
   repel_nudge_x = -0.1
   repel_nudge_y = 0.1    
-  if(xsla == "sla1_2012"){
-    xlabel = "2012 SLA1"
-    title_text = "5th Percentile Depletion vs 2012 SLA1"
-  }else{
-    xlabel = "2012 SLA2"
-    title_text = "5th Percentile Depletion vs 2012 SLA2"
+  if(xsla == "sla1_2012" & ysla == "alt_sla"){      # Interested in these three potentially. 
+    xlabel = "2012 SLA1"  
+    ylabel = "Alternating Season SLA"  
+  }else if(xsla == "sla1_2012" & ysla == "sla2_2012"){
+    xlabel = "2012 SLA1\n5th Percentile Depletion"
+    ylabel = "2012 SLA2"
+  }else if(xsla == "sla2_2012" & ysla == "alt_sla"){
+    xlabel = "2012 SLA 2\n5th Percentile Depletion"
+    ylabel = "Alternating Season SLA"  
   }
-
-  # Here we need to pass function argument variables into `ggplot`. 
-  # Gets a little involved because ggplot apparently only sees global environment vars,
+  
+  # Here we need to pass variable function arguments into `ggplot`. 
+  # A little involved because ggplot only sees global environment vars.
   .e <- environment()
   ggplot(data = dat_plt, aes(x = dat_plt[, xsla], 
                              y = dat_plt[, ysla],
@@ -58,12 +63,12 @@ plot_xy_depl = function(dat, xsla, ysla){
                alpha = 0.7) +
     scale_fill_manual(values = c("blue", "orange"),
                       name = "2012 IWC Evaluation Trials:",
-                      labels = c("Preliminaries", "Reviewed in Detail")) +
+                      labels = c("Reviewed Preliminarily, and", "In More Detail")) +
     mytheme_bw +
-    labs(x = xlabel, y = "Alternating Season SLA") +
-    ggtitle("5th Percentile Depletion vs 2012 SLA2") +
-    ggtitle(title_text) +
-    theme(plot.title = element_text(hjust = 0.5)) +  # Center title
+    labs(x = xlabel, y = ylabel) +
+    # ggtitle("5th Percentile Depletion vs 2012 SLA2") +
+    # ggtitle(title_text) +
+    # theme(plot.title = element_text(hjust = 0.5)) +  # Center title
     geom_hline(yintercept = 0.6, lty = 2, alpha = 0.6) +
     geom_vline(xintercept = 0.6, lty = 2, alpha = 0.6) +
     geom_abline(intercept = 0, slope = 1, alpha = 0.8) +
@@ -86,28 +91,23 @@ plot_xy_depl = function(dat, xsla, ysla){
     theme(legend.position = c(0.70, 0.25))  # , legend.title=element_blank()
 }
 
+#
+# Plot three comparisons and save as *.png files -------------------------------
+#
+
 # Compare two SLAs (SLA1 and SLA2) that were found to be acceptable during 2012 IWC IR
 delta_low5_final %>% plot_xy_depl(dat = ., xsla = "sla1_2012", ysla = "sla2_2012")
 ggsave(filename = "./figs/xy_depl_2012.png", dpi = 500)
-system("open ./figs/xy_depl_a.png")
 
 # Compare SLA1 from 2012 to Alternating Season SLA
 delta_low5_final %>% plot_xy_depl(dat = ., xsla = "sla1_2012", ysla = "alt_sla")
 ggsave(filename = "./figs/xy_depl_a.png", dpi = 500)
-system("open ./figs/xy_depl_a.png")
 
 # Compare SLA2 from 2012 to Alternating Season SLA
 delta_low5_final %>% plot_xy_depl(dat = ., xsla = "sla2_2012", ysla = "alt_sla")
 ggsave(filename = "./figs/xy_depl_b.png", dpi = 500)
-system("open ./figs/xy_depl_b.png")
 
+xx = 1:10000
+yy = 1 / sqrt(xx)
+plot(xx, yy, type = 'b', xlab = "A", ylab = "CV(A) = 1 / sqrt(A)")
 
-# Base plot --------------------------------------------------------------------
-# base_plt_comp = function(xx, yy){
-#   plot(xx, yy, type = "p", xlab = "2012 SLA1", ylab = "Alt Season SLA", main = "5th Percentile of Final Depletion", xlim = c(0,1), ylim = c(0,1), yaxs = 'i', xaxs = 'i')
-#   abline(a = 0, b = 1, lty = 1)
-#   abline(h = 0.6, lty = 2); abline(v = 0.6, lty = 2)  
-# }
-# x1 = delta_low5_final$sla1_2012
-# y1 = delta_low5_final$alt_sla
-# base_plt_comp(xx = x1, yy = y1)  # Base R plot for initial proto-type inspection

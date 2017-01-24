@@ -3,12 +3,16 @@
 .RData
 .Ruserdata
 
+# Generic go-between input file 
+copy.dat
+
 # Output files 
 aw-conf1.*
 aw-sum1.*
 figout1.*
 *.out
 f90/Allout
+cout.res
 
 # Prerequisites
 *.d
