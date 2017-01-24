@@ -5,6 +5,4 @@
 The remaining `*.png` files plot results and performance comparisons between strike limit algorithms. 
 
 ![](./xy_depl_a.png)
-<!--
 ![](./freqpoly_landings.png)
--->
