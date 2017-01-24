@@ -15,7 +15,7 @@ library(tidyverse) # ggplot2 + most anything else that might be needed in the ne
 
 rm(list = ls())    # Clear workspace
 
-source("./R/Table_Check.R")  # "WARNING! ./bash/runset_all.sh LATELY? THIS COULD TAKE A WHILE "
+# source("./R/Table_Check.R")  # "WARNING! ./bash/runset_all.sh LATELY? THIS COULD TAKE A WHILE "
 # Read 2012 depletion results and join into one data.frame with results from current trial batch
 source("./R/Join_Depletion_Tables.R")  
 
@@ -26,35 +26,112 @@ source("./R/Join_Depletion_Tables.R")
 # Use package devtools to load plot theme code with `source_gist`
 source_gist(id = "484d152675507dd145fe", filename = "mytheme_bw.R")  
 
-# Parameters for plotting
-repel_force = 1
-repel_nudge_x = -0.1
-repel_nudge_y = 0.1  
-  
-# To run multi-line in RStudio, align cursor on next line and press Ctrl + Enter (Mac OS)
-ggplot(data = delta_low5_final, aes(x = sla1_2012, y = alt_sla, labels = trial)) +
-  geom_point(aes(fill = finalist), shape = 21, size = 4, alpha = 0.7) + 
-  scale_fill_manual(values = c("blue", "orange"),
-                    labels = c("2012 Trials", "AWMP Detailed Review")) +
-  mytheme_bw + 
-  labs(x ="2012 SLA1", y = "Alternating Season SLA") +
-  ggtitle("5th Percentile Depletion vs 2012 SLA1") +
-  theme(plot.title = element_text(hjust = 0.5)) +  # Center title
-  geom_hline(yintercept = 0.6, lty = 2, alpha = 0.6) +
-  geom_vline(xintercept = 0.6, lty = 2, alpha = 0.6) +
-  geom_abline(intercept = 0, slope = 1, alpha = 0.8) + 
-  coord_cartesian(xlim = c(0.2, 1), ylim = c(0.2, 1)) +
-  geom_text_repel(aes(label = trial), 
-                  data = subset(delta_low5_final, finalist == TRUE), 
-                  force = repel_force,
-                  nudge_x = repel_nudge_x,
-                  nudge_y = repel_nudge_y) +
-  theme(legend.position = c(0.65, 0.20),
-        legend.title=element_blank())  
-  
-  
-delta_low5_final %>% arrange()
+plot_xy_depl = function(dat, xsla, ysla){
+  # Make this more general by processing data given function arguments. 
+  dat_plt = dat %>% select_("trial", "finalist", xsla, ysla) # , finalist, xsla, ysla)
+  dat_labels = dat_plt %>% filter(finalist == TRUE)
+  glimpse(dat_plt)  # Check
+  glimpse(dat_labels)
 
+  # Parameters for plotting
+  repel_force = 1
+  repel_nudge_x = -0.1
+  repel_nudge_y = 0.1    
+  if(xsla == "sla1_2012"){
+    xlabel = "2012 SLA1"
+    title_text = "5th Percentile Depletion vs 2012 SLA1"
+  }else{
+    xlabel = "2012 SLA2"
+    title_text = "5th Percentile Depletion vs 2012 SLA2"
+  }
+
+  # Here we need to pass function argument variables into `ggplot`. 
+  # Gets a little involved because ggplot apparently only sees global environment vars,
+  .e <- environment()
+  ggplot(data = dat_plt, aes(x = dat_plt[, xsla], 
+                             y = dat_plt[, ysla],
+                             labels = trial), 
+                environment = .e) +
+    geom_point(aes(fill = finalist),
+               shape = 21,
+               size = 4,
+               alpha = 0.7) +
+    scale_fill_manual(values = c("blue", "orange"),
+                      name = "2012 IWC Evaluation Trials:",
+                      labels = c("Preliminaries", "Reviewed in Detail")) +
+    mytheme_bw +
+    labs(x = xlabel, y = "Alternating Season SLA") +
+    ggtitle("5th Percentile Depletion vs 2012 SLA2") +
+    ggtitle(title_text) +
+    theme(plot.title = element_text(hjust = 0.5)) +  # Center title
+    geom_hline(yintercept = 0.6, lty = 2, alpha = 0.6) +
+    geom_vline(xintercept = 0.6, lty = 2, alpha = 0.6) +
+    geom_abline(intercept = 0, slope = 1, alpha = 0.8) +
+    coord_cartesian(xlim = c(0.2, 1), ylim = c(0.2, 1)) +
+    geom_text_repel(data = dat_labels,
+                    aes(x = dat_labels[, xsla], 
+                        y = dat_labels[, ysla], 
+                        label = trial),
+                    environment = .e,
+                    # Add extra padding around each text label.
+                    box.padding = unit(0.5, 'lines'),
+                    # Color of the line segments.
+                    # segment.color = "darkgray",
+                    segment.alpha = 0.6,
+                    segment.color = "orange",
+                    alpha = 0.8,
+                    force = repel_force,
+                    nudge_x = repel_nudge_x,
+                    nudge_y = repel_nudge_y) +
+    theme(legend.position = c(0.70, 0.25))  # , legend.title=element_blank()
+}
+
+# Compare two SLAs (SLA1 and SLA2) that were found to be acceptable during 2012 IWC IR
+delta_low5_final %>% plot_xy_depl(dat = ., xsla = "sla1_2012", ysla = "sla2_2012")
+ggsave(filename = "./figs/xy_depl_2012.png", dpi = 500)
+system("open ./figs/xy_depl_a.png")
+
+# Compare SLA1 from 2012 to Alternating Season SLA
+delta_low5_final %>% plot_xy_depl(dat = ., xsla = "sla1_2012", ysla = "alt_sla")
+ggsave(filename = "./figs/xy_depl_a.png", dpi = 500)
+system("open ./figs/xy_depl_a.png")
+
+# Compare SLA2 from 2012 to Alternating Season SLA
+delta_low5_final %>% plot_xy_depl(dat = ., xsla = "sla2_2012", ysla = "alt_sla")
+ggsave(filename = "./figs/xy_depl_b.png", dpi = 500)
+system("open ./figs/xy_depl_b.png")
+
+
+
+
+# Check
+# delta_low5_final %>% arrange(alt_sla) %>% head
+# glimpse(delta_low5_final)
+
+# Debugging passing variable into ggplot
+
+showplot1 <- function(indata, inx, iny){
+  p <- ggplot(indata, 
+              aes_q(x = as.name(names(indata)[inx]), 
+                    y = as.name(names(indata)[iny])))
+  p + geom_point(size=4, alpha = 0.5)
+}
+showplot2<-function(indata, inx, iny) {
+  dat <- indata
+  p <- ggplot(dat, aes(x=dat[,inx], y=dat[,iny]), environment = environment())
+  p <- p + geom_point(size=4, alpha = 0.5)
+  print(p)
+}
+# test data (using non-standard names)
+testdata<-data.frame(v1=rnorm(100), v2=rnorm(100), v3=rnorm(100), v4=rnorm(100), v5=rnorm(100))
+names(testdata) <- c("a-b", "c-d", "e-f", "g-h", "i-j")
+testdata2 <- data.frame(v1=rnorm(100), v2=rnorm(100), v3=rnorm(100), v4=rnorm(100), v5=rnorm(100))
+names(testdata2) <- c("a-b", "c-d", "e-f", "g-h", "i-j")
+
+# works
+showplot1(indata=testdata, inx=2, iny=3)
+# this update works in the aes_q version
+showplot1(indata=testdata, inx=2, iny=3) %+% testdata2
 
 # Base plot --------------------------------------------------------------------
 # base_plt_comp = function(xx, yy){
