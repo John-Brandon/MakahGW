@@ -23,6 +23,7 @@ sla_2012 = read_csv(file = "./tables/Table_A1_JCRM_2013.csv")  # SLA 1 and 2 (al
 
 # Load results_check from Alternating Season SLA batch of evaluation trials
 load(file = "./R/output_tables.RDATA")  
+glimpse(results_check)  # Alternating Season SLA
 
 # 
 # Massage data.frames before doing joining tables ------------------------------
@@ -40,6 +41,7 @@ rescaled_depl = make_factor_column(text = "rescaled", nrows = nrow(results_check
 
 # More wrangling of data to get from wide to long
 results_check = cbind(results_check, sla_check, final_depl, rescaled_depl)
+
 glimpse(results_check)  # Check
 
 low5_final_check = results_check %>% 

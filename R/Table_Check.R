@@ -85,15 +85,21 @@ results_check = read_csv(file = out.path, skip = 2, col_names = F)
 #         3 for median final depl;
 #         8 for lower 5th rescaled depletion (zero catches); 
 #         9 for median rescaled depletion;
-#         24 for median annual landings.
-results_check = results_check %>% select(1, 2, 3, 8, 9, 24)
+#         24 for median annual landings; 
+#         27 for median struck and lost;
+#         30 for median PCFG killed.
+results_check = results_check %>% select(1, 2, 3, 8, 9, 24, 30)
 
 # Edit trial names (simplify, no SLA)
 results_check[,1] %<>% unlist(use.names = FALSE) %>% substr(start = 1, stop = 5)
-names(results_check) = c("trial", "low5th_final", "median_final", "low5th_rescale", "median_rescale", "median_landing")
+names(results_check) = c("trial", "low5th_final", "median_final", "low5th_rescale", "median_rescale", "median_landing","median_PCFGkilled")
 
 # Write `results_2012` and `results_check` to RData file
 save(results_2012, results_check, file = "./R/output_tables.RData")
+
+# Output table for text
+glimpse(results_check)
+write.csv(file = "./tables/Stats.csv", x = results_check, row.names = F)
 
 # 
 # Code below was used to check code from Andre against accepted numbers. Found identical.

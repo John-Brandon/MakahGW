@@ -33,10 +33,10 @@ levels(sla_all$sla)[levels(sla_all$sla)=="sla1_2012"] <- "SLA1"
 levels(sla_all$sla)[levels(sla_all$sla)=="sla2_2012"] <- "SLA2"
 
 #
-# Plot frequency polygon of median PCFG annual landings using facet ------------
+# Plot frequency polygon of median gray whale annual landings using facet ------
 #
 # A frequency polygon shows the same binned data as hist, but with lines instead of bars. 
-sla_all %>% filter(depl_cat == "final") %>% 
+sla_all %>% filter(depl_cat == "final") %>%  # This selection is to prevent duplicate trial results (otherwise two of each)
   ggplot(data = ., aes(x = landing_median, color = sla)) + # fill = finalist 
   geom_freqpoly(binwidth = 0.2) +
   labs(x = "Median Annual Landings", y = "Number of Trials") +
@@ -44,7 +44,19 @@ sla_all %>% filter(depl_cat == "final") %>%
   guides(color = FALSE) +
   facet_grid(sla ~ .)
 
-ggsave(filename = "./figs/freqpoly_PCFG_landings.png", dpi = 500)
+ggsave(filename = "./figs/freqpoly_landings.png", dpi = 500)
+
+#
+# Plot frequency polygon of median PCFG annual mortality using facet -----------
+#
+sla_all %>% filter(depl_cat == "final") %>% 
+  ggplot(data = ., aes(x = median_PCFGkilled, color = sla)) + # fill = finalist 
+  geom_freqpoly(binwidth = 0.2) +
+  labs(x = "Median PCFG Killed in Hunt", y = "Number of Trials") +
+  mytheme_bw + 
+  guides(color = FALSE) +
+  facet_grid(sla ~ .)
+
 
 #
 # Developmental function below for overlapping histograms of depletion. Work in progress. 
