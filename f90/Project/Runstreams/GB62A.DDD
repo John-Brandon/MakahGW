@@ -1,5 +1,5 @@
-MANAGEMENT PARAMETERS         CASE  GB62A
-BASE CASE: 4.5%/4.5%; FNeed=340/7; Survey B; 80:20 F:M Sex ratio           
+MANAGEMENT PARAMETERS         CASE  GB01A
+BASE CASE: 4.5%/4.5%; FNeed=340/7; Survey B; Immigration = 2               
  
 NAME OF PARAMETER FILE               FILNAM  GB01A.PAR
 NAME OF CONDITIONING DATA FILE       MATNAM  MATRIXB.DAT
@@ -28,7 +28,7 @@ HISTORIC CATCH OPTION 1=50:50 catch  OPTHC     0
 MINIMUM CALVING INTERVAL             NY        0
 TARGET YEAR                          IYRTAR 1968
 FUTURE CATCH SEX RATIO (NORTH)       CRATIO  0.5
-FUTURE CATCH SEX RATIO (PCFG)        CRATIO   .20
+FUTURE CATCH SEX RATIO (PCFG)        CRATIO   .50
 HISTORIC CATCH BIAS                  BIASC   1.0
 IMMIGRATION SCALAR                   IMMIRRF 2.00
 IMMIGRATION POWER                    IMMIPOW 1.00
@@ -71,8 +71,8 @@ BIAS IN YEAR 25 (2)                  BIAS    1.00
 BIAS IN FINAL YEAR (2)               BIASF   1.00
 MEAN BIAS (NORTH)                    BIASB1  1.000
 SD BIAS (NORTH)                      SDB1    0.000
-MEAN BIAS (PCFG)                     BIASB2  0.744
-SD BIAS (PCFG)                       SDB2    0.110
+MEAN BIAS (PCFG)                     BIASB2  1.000
+SD BIAS (PCFG)                       SDB2    0.000
 NO. OF DEGREES OF FREEDOM            DOF     19.00
 CV ESTIMATE: EXPECTATION VALUE (1st) CV1EST   .075
 CV ESTIMATE: EXPECTATION VALUE (1st) CV1EST  0.097

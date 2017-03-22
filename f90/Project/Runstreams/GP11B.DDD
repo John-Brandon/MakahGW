@@ -1,8 +1,8 @@
-MANAGEMENT PARAMETERS         CASE  GP11B
-BASE CASE: 4.5%/2.0%; FNeed=340/7; Pulse Im; Stuck & lost = 0.25           
+MANAGEMENT PARAMETERS         CASE  GB01A
+BASE CASE: 4.5%/4.5%; FNeed=340/7; Survey B; Immigration = 2               
  
-NAME OF PARAMETER FILE               FILNAM  GP01B.PAR
-NAME OF CONDITIONING DATA FILE       MATNAM  MATRIXP.DAT
+NAME OF PARAMETER FILE               FILNAM  GB01A.PAR
+NAME OF CONDITIONING DATA FILE       MATNAM  MATRIXB.DAT
 No. OF TRIALS                        NTRIAL  100
 No. OF YEARS IN SIMULATION           NYEAR   100
 YEAR MODEL BEGINS                    ISTART 1600
@@ -19,7 +19,7 @@ TIME DEPENDENCE IN K(2) 0:Const      OPTK      0
 TIME DEPENDENCE IN A 0:Const         OPTA      0
 TIME DEPENDENCE IN M(1) 0:Const      OPTM      0
 TIME DEPENDENCE IN M(2) 0:Const      OPTM      0
-IMMIGRATION 0: Default; 1:Pulse      OPTIMMI   1
+IMMIGRATION 0: Default; 1:Pulse      OPTIMMI   0
 LAG IN DENSITY DEPENDENCE            ILAG      2
 NUMBER OF EPISODIC EVENTS            NEVENT    0
 EVENT POPULATION % REDUCTION         EVENTS    0
@@ -47,7 +47,7 @@ PROB PCFG NOT DETECTED AS PCFG       PFNeg    .00
 PROB NORTH DETECTED AS PCFG (Yr1)    PFPos    .01
 PROB NORTH DETECTED AS PCFG (Yr99)   PFPos    .01
 FRACTION OF NORTH IN PCFG SURVEY     FracObs 0.00
-PROBABILITY STRUCK                   PrStrk   .25
+PROBABILITY STRUCK                   PrStrk   .50
 Month of harvest                     MonHa     4
     Incidental catches
 NORTH AREA                           INCC(1)  .00
@@ -71,8 +71,8 @@ BIAS IN YEAR 25 (2)                  BIAS    1.00
 BIAS IN FINAL YEAR (2)               BIASF   1.00
 MEAN BIAS (NORTH)                    BIASB1  1.000
 SD BIAS (NORTH)                      SDB1    0.000
-MEAN BIAS (PCFG)                     BIASB2  0.744
-SD BIAS (PCFG)                       SDB2    0.110
+MEAN BIAS (PCFG)                     BIASB2  1.000
+SD BIAS (PCFG)                       SDB2    0.000
 NO. OF DEGREES OF FREEDOM            DOF     19.00
 CV ESTIMATE: EXPECTATION VALUE (1st) CV1EST   .075
 CV ESTIMATE: EXPECTATION VALUE (1st) CV1EST  0.097
@@ -88,8 +88,8 @@ PRIOR FOR MSYR1                              UNIFORM
 MINIMUM VALUE                                 .0450
 MAXIMUM VALUE                                 .0450
 PRIOR FOR MSYR2                              UNIFORM
-MINIMUM VALUE                                 .0200
-MAXIMUM VALUE                                 .0200
+MINIMUM VALUE                                 .0450
+MAXIMUM VALUE                                 .0450
 PRIOR FOR TRANSITION AGE (TRANSA)            DUNIFORM
 MINIMUM VALUE                                0.0000
 MAXIMUM VALUE                                0.0000
