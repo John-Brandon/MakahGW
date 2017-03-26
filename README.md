@@ -4,18 +4,19 @@ Original Fortran source code provided courtesy of Andre E. Punt (Univ. of Washin
 
 This repository is a fork off the 2012 version of the code. The base of this master branch (i.e. the version of files used for the 2012 runs) can be accessed through `git` by cloning this repository and reverting to the first commit (SHA1 80f57d2). Results from that version of the code have been checked against those reported during 2012 (JCRM 2013 Suppl Annex) and found to be identical.    
 
-The developmental version of the code by JRB is on a parrallel branch named, `alt_sla` (c.f. the `master` branch). The Strike Limit Algorithm for this hunt is based on an alternating season hunt strategy. A flow diagram for this SLA is provided below. 
+The Strike Limit Algorithm for this hunt is based on an alternating season hunt strategy. A flow diagram for this SLA is provided below. 
 
 <p align="center">
-  <img src="./figs/FlowChart_4x_12pt.png" width="800" align="center" title="Makah Alternating Season Strike Limit Algorithm">
+  <img src="./figs/FlowChart.png" width="800" align="center" title="Makah Alternating Season Strike Limit Algorithm">
 </p>
 
 There are several differences between this SLA and that from 2012, including:
 
-1. A winter/spring hunt occurs during even numbered years. The strike limit maximum is 3 gray whales total regardless of stock.
+	- A winter/spring hunt is assumed to occur during even numbered years. 
+		-The winter/spring strike limit is 3 gray whales total, regardless of stock.
 2. During odd years, a summer hunt occurs. All summer strikes are assumed to be PCFG whales. 
 3. The summer hunt is stopped if either: (a)  one whale is landed, or (b) there are two strikes, or (c) the Strike Limit for PCFG whales is reached (struck and lost whales are counted as deaths regardless of season).
-4. The alternating season hunt does not have a block quota, e.g. 5yr limit on landed whales.
+4. The alternating season hunt does not have a block quota, e.g. no 10 yr block limit on strikes.
 5. The annual PCFG Strike Limit in both seasons is calculated as `ABL = PBR - HCM`.  
 Where:  
   * `HCM`   = Human Caused Mortality (non-hunting, and set equal to 0.40). The ABL from 2012 did not subtract HCM from PBR. 
