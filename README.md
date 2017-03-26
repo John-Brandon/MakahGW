@@ -7,7 +7,7 @@ This repository is a fork off the 2012 version of the code. The base of this mas
 The Strike Limit Algorithm for this hunt is based on an alternating season hunt strategy. A flow diagram for this SLA is provided below. 
 
 <p align="center">
-  <img src="./figs/FlowChart.png" width="800" align="center" title="Makah Alternating Season Strike Limit Algorithm">
+  <img src="./figs/FlowChart_4x_12pt.png" width="800" align="center" title="Alternating Season Strike Limit Algorithm">
 </p>
 
 There are several differences between this SLA and that from 2012, including:
