@@ -124,17 +124,18 @@ C --------------------------------------------------------------------
 C --------------------------------------------------------------------
 
       MODULE DECL_PCFG
-
+! Redeclared ABL vector from integer to real. JRB 
       COMMON / PCFG / PHIHISTPCFG,PHIHISTSOUTH,PHIFUTPCFG,ABL,
      +      ProbFalseNeg,ProbFalsePos1,ProbFalsePos2,
      +      FracObs,ProbStrk,Reason,
      +      MonthHarvest,Landed,Strikes,StruckLost,PCFGDesignated,
      +      DeltaHistPCFG,DeltaHistSOUTH,DeltaFutPCFG
-      DOUBLE PRECISION PHIHISTPCFG,PHIHISTSOUTH,PHIFUTPCFG,
+      DOUBLE PRECISION PHIHISTPCFG,PHIHISTSOUTH,PHIFUTPCFG, 
+     +      ABL(-100:99), ! Changed because NOAA SLA differs from Makah proposal
      +      ProbFalseNeg,ProbFalsePos1,ProbFalsePos2,
      +      FracObs,ProbStrk, PropPCFG
      +      DeltaHistPCFG,DeltaHistSOUTH,DeltaFutPCFG
-      INTEGER ABL(-100:99),Reason(-100:99),MonthHarvest,
+      INTEGER Reason(-100:99),MonthHarvest, ! ABL(-100:99)
      +      Landed(-100:100),Strikes(-100:100),StruckLost(-100:100),
      +      PCFGDesignated(-100:100)
       
@@ -150,6 +151,7 @@ C --------------------------------------------------------------------
       	LOGICAL winter_season
       	INTEGER mod_yr  ! modulus(x = 2) of year number: summer v winter season
         real, parameter :: HCM = 0.4d0  ! Human caused mortality: ABL = PBR - HCM
+	real(kind = 8) :: abl_d0(-100:99), pbr_d0(-100:99)  ! initialize floating point variables for limits
         real(kind = 8) :: carryover_winter, carryover_summer 
         real(kind = 8) :: carryover_all  ! carryover not currently implemented
       END MODULE ALT_PCFG
@@ -633,18 +635,9 @@ C           Call SLC (subsistence limit calculation) to set the block quota.
             IF (MANAGE.EQ.' ') THEN            ! Base case 
               NVAL = NEEDI / DBLE(IQUOTA(2))   ! At present, block iquota (= 1) set every year for PCFG
 
-! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-              ! print *, "-----------------------------------------------"
-              ! print *, "IYR", IYR
-              ! print *, "winter_season:", winter_season
-!              print *, "NVAL", NVAL  ! Block NEED divided by Block lenght = annual quota under block
-              ! print *, "NEEDI", NEEDI
-!              print *, "IQOUTA(2) Duration of PCFG Block", IQUOTA(2)  ! CHECK THIS IS DURATION OF PCFG BLOCK QUOTA
-!              print *, "NYEAR", NYEAR  ! NYEAR = 100
-!              print *, "ABL(IYR)", ABL(IYR)
-              ! print *, "-----"
-              ! print *, "CALLING SLCPFCG"
-! Strike Limit Control (SLC) returns variable ABLV for ABL value (equal to PBR). 							 
+! Strike Limit Control (SLC) returns variable ABLV for ABL value 
+! ABL equal to PBR at this stage. 
+! ABL is modified again further below (e.g. HCM subtracted) 							 
               CALL SLCPFCG (CATM,CATF,SIGHT,CVX,IYRQ,ICAT1,ISUR1,
      +               NEEDI, NEWQ2,NSIM,IQUOTA(1),ABLV)
 !              print *, "ABLV", ABLV
@@ -657,23 +650,43 @@ C           Call SLC (subsistence limit calculation) to set the block quota.
               ! print *, "-----"
 
 C             Ensure 0 <= NEWQ <= NEED 
-              ABLV = INT(MAX(0.D0, MIN(ABLV,NVAL)))
+              !print *, " "
+	      !print *, "here"
+              !print *, " "
+	      !print *, "Trial: ", N
+	      !print *, "Year: ", IYR
+              !print *, "ABLV", ABLV
+             
+	      ! The NOAA algorithm treats ABL differently than the Makah Tribe's proposed  SLA 
+	      ! There is a non-binary component in NOAA's SLA
+	      ! During winter/spring whaling, if a whale is struck AND
+	      !   lost, 0.3d0 is subtracted from the limit.
+	      ! In the IWC algorithm, 0.3d0 -> p in a bernoulli trial.
+	      ! 
+	      ! ABLV = INT(MAX(0.D0, MIN(ABLV,NVAL)))
               
               ! DEBUGGING JRB
-              ! print *, ""
-              ! print *, "ABLV rounded down:"
-              ! print *, "INT(MAX(0.D0, MIN(ABLV, NVAL)))"
-              ! print *, "ABLV", ABLV
+              !print *, ""
+              !print *, "ABLV rounded down:"
+              !print *, "INT(MAX(0.D0, MIN(ABLV, NVAL)))", 
+              !print *, "ABLV", ABLV
 C
               ! DEBUGGING JRB
+	      !print *, ""
+	      !print *, "N: ", N
+	      !print *, "IYR: ", IYR
+	      !print *, "ABLV: ", ABLV
+
+	      ! Ouput for testing
               ! if (N.eq.1 .and. IYR.ge.10) then
               !   print *, "ABL(1:10)", ABL(1:10)
-              !   stop
-              !end if
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-              IF (PCFGCASE.GE.4.AND.PCFGCASE.LE.6) ABLV = 1
-              IF (PCFGCASE.GE.7.AND.PCFGCASE.LE.9) ABLV = 2
-              IF (PCFGCASE.GE.10.AND.PCFGCASE.LT.20) ABLV = 100
+              ! end if
+
+              ! Can remove these cases for NOAA Alternating Season SLA. These were requested 
+	      !   during the IWC IR  -JRB
+	      !IF (PCFGCASE.GE.4.AND.PCFGCASE.LE.6) ABLV = 1
+              !IF (PCFGCASE.GE.7.AND.PCFGCASE.LE.9) ABLV = 2
+              !IF (PCFGCASE.GE.10.AND.PCFGCASE.LT.20) ABLV = 100
             ELSE IF (MANAGE.EQ.'Z') THEN
               ABLV = 0.D0
             ELSE IF (MANAGE.EQ.'I') THEN
@@ -685,7 +698,17 @@ C
             ENDIF
           ENDIF					
 C
-C         DATGEN sets abundance estimate and CV in IYR if ISIGHT=1: Section B1				
+C         DATGEN sets abundance estimate and CV in IYR if ISIGHT=1: Section B1 
+! Where Section B1 refers to the operating model description in the IWC AWMP reports.
+! Data generation has been updated for the NOAA analysis. The difference being, the IWC IR
+!   used abundance estimates generated from the OR-SVI survey sub-area, whereas NOAA
+!   bases their algorithm on the larger putative feeding area between NCA-SEAK.
+! The *.DDD input files with individual trial specifications have 
+!   been updated to make this change by editing the "BIAS" parameter. 
+! The update was implemented by the ./R/DatGen_NPCFG.R script, which contains
+!   code to batch the reproducible editing process for all *.DDD trial files.
+!   i.e. bias is set to zero for all trial files, such that estimates are based on 
+!   100% of PCFG abundance. 
           DO IS = 1, 2
             CALL DATGEN (SIGHT(IS,IYR),CVX(IS,IYR),0,
      +        PSURVObs(IS,IYR),KNObs(IS),BIAS(IS,IYR),ISIGHT(IS,IYR),
@@ -735,25 +758,13 @@ C         Specify the probability of false positives.
      +     IYR*(ProbFalsePos2-ProbFalsePos1)/99.0d0
 C
 C         Special feature implement the ABL
-! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! NEXP looks approximately equal to 1+ stock abundance (see file = AW-RES)
-! What is this? Catching PCFG extinctions?
+! What is this? Catching PCFG extinctions? -JRB
           IF (NEXP(2,IYR) + DeltaFutPCFG * NEXP(1,IYR).GT.0) THEN
             PropPCFG = NEXP(2,IYR) / 
      +        (NEXP(2,IYR) + DeltaFutPCFG * NEXP(1,IYR))
-            !print *, ""
-            !print *, "DeltaFutPCFG", DeltaFutPCFG
-            !print *, "NEXP(2,IYR)", NEXP(2, IYR)
-            !print *, "PropPCFG", PropPCFG
-            !print *, ""
-            !call debug(N, IYR, "line 739 ")
           ELSE
             propPCFG = 0
-            !print *, "DeltaFutPCFG", DeltaFutPCFG
-            !print *, ""
-            !print *, "NEXP(2,IYR)", NEXP(2, IYR)
-            !print *, ""
-            ! call debug(N, IYR, "PropPCFG = 0 --------*")
             GOTO 555  ! Exit looping over strikes
           ENDIF 
 C
@@ -769,45 +780,33 @@ C         Set the various counters to zero
 
 !  Check limits before a strike is allowed 
 !
-!  This bit should be updated. During 2012 IR there was a limit to struck and 
-!  lost in the hunt plan. This is not true of the 2017 alternating season
-!  plan; the limit is on the number of strikes (irregardless of lost or landed). 
+!  During 2012 IWC IR there was a limit to struck and 
+!  lost in the hunt plan. This is not true of the NOAA Alternating Season
+!  SLA; the limit is on the number of strikes (irregardless of lost or landed). 
 !  Moreover, the max strike limit differs between seasonal hunts: winter/spring (3 strikes)
-!  vs summer (2 strikes). The max strike limit for the current year is set above (see line 594),
+!  vs summer (2 strikes). The max strike limit for the current year is set above (see line ~594),
 !  and stored in the NEED matrix. 
-!    These decision rules need to be revised accordingly.
 !  JRB
 
 ! Strike limit reached. 
 ! NOTE: Because NEED has been set equal to the max strike limit (3 for winter, 2 for summer), 
-!       This condition effectively implements the strike limit. 
+!       This condition effectively implements the NOAA strike limit -JRB 
           if (Strikes(IYR) .GE. NEED(2, IYR)) then
-            IF (winter_season .neqv. .TRUE.) THEN 
-              Reason(IYR) = 1  ! Hit limit of 2 strikes (PCFG) during summer. . 
-             ! DEBUGGING JRB 
-             ! call debug(N, IYR, "Strikes equal to need.")  ! Catch error for 2017
+            ! Check which season 
+            if (winter_season .neqv. .TRUE.) then
+              Reason(IYR) = 1  ! Hit limit of 2 strikes (PCFG) during summer.  
+             ! call debug(N, IYR, "Summer strikes equal to need.")  ! note debug() function -JRB
               GOTO 555         ! Proceed to next year's hunt.
-            ELSE
+            else
               Reason(IYR) = 2  ! Hit limit of 3 total strikes during winter
               GOTO 555
-            ENDIF
+            end if
           end if
 
-!          2012 (old) rule
-C         Stop harvest: struck and lost hits 3
-!          Alternating Season hunt plan has no explicit limits on struck and lost. Just strikes and/or landed.
-!          IF (StruckLost(IYR).EQ.3) THEN
-!           Reason(IYR) = 1
-!           GOTO 555  ! Exit looping over strikes
-!          ENDIF 
-
-! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 C
 C         Stop harvest: PCFG Mortality Limit (ABL) has been reached
-!  Note that ABL is declared and treated as an integer value. 
-!  Specifically, ABL(IYR) = ABLV rounded down to floor integer.
-!  PCFGDesignated is set below in the if/then statement for StruckAndLost
-          IF (PCFGDesignated(IYR).EQ.ABL(IYR)) THEN  ! PCFGDesignated set below
+!  PCFGDesignated is set further below in the code, with an if/then statement conditional on StruckAndLost
+          IF (PCFGDesignated(IYR).GE.ABL(IYR)) THEN  ! PCFGDesignated set below
             Reason(IYR) = 3  ! PCFG strikes hit ABL = PRB - HCM 
 ! Struck and lost assumed to be PCFG in summer hunts (2017)
 ! Struck and lost assumed 0.3 of a PCFG whale in winter hunts (2017) -- Need to check PCFGDesignated calculations  
@@ -815,7 +814,7 @@ C         Stop harvest: PCFG Mortality Limit (ABL) has been reached
            ! call debug(N, IYR, "Check delta btwn seasonal availability")
             GOTO 555  ! Exit looping over strikes
           ENDIF 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 C
 C         Landing Block quota (TotalLands) exceeded?
 !   Don't believe this is needed for 2017 alternating season plan, which is not limited 
@@ -824,28 +823,20 @@ C         Landing Block quota (TotalLands) exceeded?
 !   the hunt or keeping track of how many times hunt was stopped after landing XX whales. 
           BLOCKSTART = MAX(0,INT(IYR/5)*5)  ! Blockstart = IYR
           TotalLands = 0                    ! Re-initialize landings for this year of the 5yr block quota to zero.
-          
-          ! DEBUGGING JRB
-          ! print *, ""
-          !print *, "Blockstart", Blockstart
-          !print *, "IYR", IYR, "Strikes(IYR)", Strikes(IYR)
 
           DO IYR2 = BlockStart, IYR         ! Increment total numbers landed for this quota block 
             TotalLands = TotalLands + Landed(IYR2)  ! TotalLands for 2017 seasonal hunt should be annual sum
           
+	        !print *, 'STOPPINg Debug'
+	        !stop  
           ! DEBUGGING JRB
-           ! print *,"IYR2", IYR2, "winter_season", winter_season, 
-     +     !      "Strikes(IYR2)", Strikes(IYR2),
-     +     !      "Landed(IYR2)", Landed(IYR2)
+           print *,"IYR2", IYR2, "winter_season", winter_season, 
+     +           "Strikes(IYR2)", Strikes(IYR2),
+     +           "Landed(IYR2)", Landed(IYR2)
           END DO
 
-          IF (TotalLands.EQ.20) THEN        ! Left over from 2012 plan, which had limit on block landings
+          IF (TotalLands.EQ.20) THEN          ! Left over from 2012 plan, which had limit on block landings
             Reason(IYR) = 20                  ! Should not get here for 2017 alternating season plan
-            
-            ! DEBUGGING JRB
-            print *, ""
-            print *, "Blockstart", Blockstart
-            print *, "TotalLands", TotalLands
             call debug(N, IYR, "line: 832")   ! Catch error for 2017
             GOTO 555  ! Exit looping over strikes
           ENDIF 
@@ -921,10 +912,17 @@ C           Struck & Lost in Winter / Spring hunt:
 !           winter/spring count against (PCFG Mortality Limit) ABL in proportion to PCFG availability,
 !           PhiFutPCFG = 0.3 (base case). 
             IF (MonthHarvest. EQ. 4) THEN
-              RAND = RAN1(ISEED5, MA5, INEXT5, INEXTP5)
-              IF (RAND .LT. PhiFutPCFG) THEN
-                PCFGDesignated(IYR) = PCFGDesignated(IYR) + 1
-              ENDIF
+	       ! Need to check this logic and ensure that PCFGDesignated being treated appropriately
+	       ! By commenting out code below, this assumes PCFGDesignated does not feedback to operating model
+               PCFGDesignated(IYR) = PCFGDesignated(IYR) + 0.3d0 
+               ! print *, ""
+               ! print *, "PCFGDesignated(IYR)", PCFGDesignated(IYR)            
+               ! print *, "Stopping Debug"
+               ! stop 
+!              RAND = RAN1(ISEED5, MA5, INEXT5, INEXTP5)  ! No longer a Bernoulli trial, just set to 0.3 in line above -JRB
+!              IF (RAND .LT. PhiFutPCFG) THEN
+!                PCFGDesignated(IYR) = PCFGDesignated(IYR) + 1
+!              ENDIF
             ENDIF
 C
 C           Struck & Lost in Summer hunt [counts as PCFG]
@@ -3099,6 +3097,16 @@ C     REPORT prints out population size & catch arrays from year 0
      +   'ABL','Strike','Landed','S&K','PCFG','Reason',
      +   'INC-1','INC-2','Immigr'
       IYR= INITYR
+      ! Debugging JRB
+      print *, ""
+      print *, "Hello from procedure: REPORT"
+      print *, "IYR, e.g. INITYR", IYR
+      print *, "IYR+IYRMAN", IYR+IYRMAN
+      print *, "IYRPRJ", IYRPRJ
+      print *, "ISUR1-1", ISUR1-1
+      print *, "NYEAR-1", NYEAR-1
+      stop
+
       WRITE(IOUT,99) IYR,IYR+IYRMAN,
      +               (NINT(PMATF(IS,IYR)),NINT(PSURV(IS,IYR)),
      +                NINT(PSURVOBS(IS,IYR)),IS=1,2),
