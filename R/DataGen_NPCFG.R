@@ -1,3 +1,5 @@
+#!/usr/bin RScript
+# 
 # DataGen_NPCFG.R
 # John R. Brandon, PhD
 #
@@ -53,5 +55,5 @@ lapply(X = updated_files, FUN = "[", 74:75)  # Check
 
 # Re-write all of the input files with revised bias parameter
 for (i in seq_along(file_names)){
-  write_lines(x = updated_files[[1]], path = next_file[i])
+  write_lines(x = updated_files[[i]], path = next_file[i])
 } 
