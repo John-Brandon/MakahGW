@@ -1,8 +1,8 @@
-MANAGEMENT PARAMETERS         CASE  GB01A
-BASE CASE: 4.5%/4.5%; FNeed=340/7; Survey B; Immigration = 2               
+MANAGEMENT PARAMETERS         CASE  GP02C
+BASE CASE: 4.5%/1.0%; FNeed=340/7; Pulse Im; Immigration = 0               
  
-NAME OF PARAMETER FILE               FILNAM  GB01A.PAR
-NAME OF CONDITIONING DATA FILE       MATNAM  MATRIXB.DAT
+NAME OF PARAMETER FILE               FILNAM  GP02C.PAR
+NAME OF CONDITIONING DATA FILE       MATNAM  MATRIXP.DAT
 No. OF TRIALS                        NTRIAL  100
 No. OF YEARS IN SIMULATION           NYEAR   100
 YEAR MODEL BEGINS                    ISTART 1600
@@ -19,7 +19,7 @@ TIME DEPENDENCE IN K(2) 0:Const      OPTK      0
 TIME DEPENDENCE IN A 0:Const         OPTA      0
 TIME DEPENDENCE IN M(1) 0:Const      OPTM      0
 TIME DEPENDENCE IN M(2) 0:Const      OPTM      0
-IMMIGRATION 0: Default; 1:Pulse      OPTIMMI   0
+IMMIGRATION 0: Default; 1:Pulse      OPTIMMI   1
 LAG IN DENSITY DEPENDENCE            ILAG      2
 NUMBER OF EPISODIC EVENTS            NEVENT    0
 EVENT POPULATION % REDUCTION         EVENTS    0
@@ -30,7 +30,7 @@ TARGET YEAR                          IYRTAR 1968
 FUTURE CATCH SEX RATIO (NORTH)       CRATIO  0.5
 FUTURE CATCH SEX RATIO (PCFG)        CRATIO   .50
 HISTORIC CATCH BIAS                  BIASC   1.0
-IMMIGRATION SCALAR                   IMMIRRF 2.00
+IMMIGRATION SCALAR                   IMMIRRF  .00
 IMMIGRATION POWER                    IMMIPOW 1.00
 YEAR OF FIRST CATCH                  ICAT1  1600
 CATCH BIAS APPLIES UP TO             ICATB  1914
@@ -88,8 +88,8 @@ PRIOR FOR MSYR1                              UNIFORM
 MINIMUM VALUE                                 .0450
 MAXIMUM VALUE                                 .0450
 PRIOR FOR MSYR2                              UNIFORM
-MINIMUM VALUE                                 .0450
-MAXIMUM VALUE                                 .0450
+MINIMUM VALUE                                 .0100
+MAXIMUM VALUE                                 .0100
 PRIOR FOR TRANSITION AGE (TRANSA)            DUNIFORM
 MINIMUM VALUE                                0.0000
 MAXIMUM VALUE                                0.0000

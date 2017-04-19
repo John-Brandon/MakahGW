@@ -1,5 +1,5 @@
-MANAGEMENT PARAMETERS         CASE  GB01A
-BASE CASE: 4.5%/4.5%; FNeed=340/7; Survey B; Immigration = 2               
+MANAGEMENT PARAMETERS         CASE  GB55A
+BASE CASE: 4.5%/4.5%; FNeed=340/7; Survey B; M doubles (PCFG)              
  
 NAME OF PARAMETER FILE               FILNAM  GB01A.PAR
 NAME OF CONDITIONING DATA FILE       MATNAM  MATRIXB.DAT
@@ -18,7 +18,7 @@ TIME DEPENDENCE IN K(1) 0:Const      OPTK      0
 TIME DEPENDENCE IN K(2) 0:Const      OPTK      0
 TIME DEPENDENCE IN A 0:Const         OPTA      0
 TIME DEPENDENCE IN M(1) 0:Const      OPTM      0
-TIME DEPENDENCE IN M(2) 0:Const      OPTM      0
+TIME DEPENDENCE IN M(2) 0:Const      OPTM      1
 IMMIGRATION 0: Default; 1:Pulse      OPTIMMI   0
 LAG IN DENSITY DEPENDENCE            ILAG      2
 NUMBER OF EPISODIC EVENTS            NEVENT    0

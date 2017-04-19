@@ -1,5 +1,5 @@
-MANAGEMENT PARAMETERS         CASE  GB01A
-BASE CASE: 4.5%/4.5%; FNeed=340/7; Survey B; Immigration = 2               
+MANAGEMENT PARAMETERS         CASE  GB12A
+BASE CASE: 4.5%/4.5%; FNeed=340/7; Survey B; Stuck & lost = 0.75           
  
 NAME OF PARAMETER FILE               FILNAM  GB01A.PAR
 NAME OF CONDITIONING DATA FILE       MATNAM  MATRIXB.DAT
@@ -47,7 +47,7 @@ PROB PCFG NOT DETECTED AS PCFG       PFNeg    .00
 PROB NORTH DETECTED AS PCFG (Yr1)    PFPos    .01
 PROB NORTH DETECTED AS PCFG (Yr99)   PFPos    .01
 FRACTION OF NORTH IN PCFG SURVEY     FracObs 0.00
-PROBABILITY STRUCK                   PrStrk   .50
+PROBABILITY STRUCK                   PrStrk   .75
 Month of harvest                     MonHa     4
     Incidental catches
 NORTH AREA                           INCC(1)  .00
