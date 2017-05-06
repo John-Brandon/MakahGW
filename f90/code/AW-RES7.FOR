@@ -139,7 +139,8 @@ C      PARAMETER (IEND=300, NPRD=120)                                     ANDRE'
      +   IZFMSY(2),IZ1MSY(2),FINRF(2),FINR1(2),FINRZF(2),FINRZ1(2),
      +   IFMSYL(2),I1MSYL(2),                                               [R]
      +   NFMSYL(2),N1MSYL(2),R11(2),R1F(2),  I5,I50,I96,
-     +   ICATPCFG(6),REASON(5),LANDS(100,0:IEND),BLOCKSTART
+     +   ICATPCFG(6), LANDS(100,0:IEND),BLOCKSTART,
+     +   REASON(6)  ! Updated to six elements from five, for NOAA alternative reasons -JRB
       CHARACTER REF*10, REFZ*10, REFI*10, DESC*50, PROG*21, LINE*399,
      +   OUTDR(2)*12, OUTN(2)*12, TITLE*1, FMT*105
       EXTERNAL MED1,MED2,MED2A,MED3
@@ -232,7 +233,7 @@ C READ DATA AND INCREMENT STORED VARIABLES ------------------------------------
       DO 200 N = 1,NTRIAL
 
 C       Read trial heading line & check that trial number is correct
-        READ (IN, '(/ 6X,I4//)') NREAD
+        READ (IN, '(/ 6X,I4//)') NREAD  ! Read from 'IN' file = AW-RES
         IF (NREAD.NE.N) THEN
           WRITE (IOUT,*) ' **** ERROR READING TRIAL NUMBER', N,NREAD
           STOP ' **** ERROR IN READING TRIAL NUMBER'
@@ -242,6 +243,19 @@ C       Read zero catch trajectories. Set NZ = pointer to current 0 trajectory
         IF (N.EQ.1 .OR. FISHRY.EQ.2) THEN
           READ (IN2,'(//12X,2(8X,F8.5,F8.5) //)') MSYL1(1),MSYL1(2),
      +        MSYLF(1),MSYLF(2)
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! Debugging JRB
+! The read line below is resulting in a 'Fortran runtime error':
+!   'End of file'
+C         print *, ""
+C         print *, "Hello from AW-RES7.FOR"
+C         print *, "debugz"
+C         print *, "IN2", IN2
+C         print *, "FMT", FMT
+!          print *, "Stopping execution. In DEBUG mode."
+!          stop
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!     
+
           READ (IN2,FMT) IZ,II,KF(1),K1(1),P1A,KF(2),K1(2)
           READ (IN2,FMT) ISTART
           DO 50 IYR=ISTART+1,-MAX(IQUOTA(1),IQUOTA(2))-1
@@ -346,10 +360,22 @@ C AEP UPDATE
 
 C         Read population size & catch in IYR; store & sum variables.
 C         Check zero catch file matches in year 0
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! Debugging JRB
+          print *, ""
+          print *, "FILE #IN: ", IN
+          print *, "About to read file AW-RES"
+
           READ(IN,FMT) I,II,(PF(IS),P1(IS),P1A,IS=1,2),
      +                  (CMS(IS),CFS(IS),IS=1,2),
      +                  (CM(IS),CF(IS),IS=1,2),(RR,J=1,14),
      +                  (ICATPCFG(J),J=1,6)
+          print *, "ICATPCFG", ICATPCFG
+          print *, "ICATPCFG(6)", ICATPCFG(6)          
+          print *, "IYR", IYR
+          print *, "NYEAR", NYEAR          
+          print *, ""          
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!               
           IF (IYR.EQ.0.AND.
      +          (PF(1).NE.PFZ(1,NZ,0).OR.PF(2).NE.PFZ(2,NZ,0))) THEN
                   WRITE(*,*)' * ERROR: file mismatch in year 0',N,
@@ -505,6 +531,31 @@ C          Store previous 2 quotas
 
 C          Reset C for next quota period
            C(IS) = 0.0
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! Debugging JRB
+! The line of code below is resulting in a 'Fortran runtime error':
+!   Array reference out of bounds for array 'reason', upper bound of dimension 1 exceeded (in file 'AW-RES7.FOR', at line 555)
+          print *, ""
+          print *, "Hello from AW-RES7.FOR"
+          print *, "IS", IS
+          print *, "IYR", IYR
+          print *, "NYEAR", NYEAR
+          print *, "ICATPCFG()", ICATPCFG
+          print *, "ICATPCFG(6)", ICATPCFG(6)
+          print *, "REASON()", REASON
+C         print *, "Stopping aw-res7.app"
+C         stop
+!          print *, "Stopping execution. In DEBUG mode."
+!          stop          
+!          print *, "REASON(ICATPCFG(6))", REASON(ICATPCFG(6))
+!          print *, "STRUCK", STRUCK
+!          print *, "ICATPCFG(4)", ICATPCFG(4)
+!          print *, "LANDED", LANDED
+!          print *, "ICATPCFG(3)", ICATPCFG(3)
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+
 C
 C          Special for PCFG
            IF (IS.EQ.2.AND.IYR.NE.NYEAR.AND.ICATPCFG(6).NE.0) THEN
