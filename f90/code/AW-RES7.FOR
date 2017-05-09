@@ -186,7 +186,8 @@ C          to output.  Skip the same lines in the zero catch file
     6 READ (LINE,'(8X,I2,T41,A)') FISHRY,FMT
 
 C     Set periods for which to set statistics (i.e. set T)
-      ITYEAR(1) = NYEAR / 5
+!      ITYEAR(1) = NYEAR / 5  ! statistics for 20 year time period
+      ITYEAR(1) = 10  ! statistics for 10 year waiver period for NOAA proposed hunt
       ITYEAR(2) = NYEAR
 
 C     Initialise NEED array
@@ -242,20 +243,7 @@ C
 C       Read zero catch trajectories. Set NZ = pointer to current 0 trajectory
         IF (N.EQ.1 .OR. FISHRY.EQ.2) THEN
           READ (IN2,'(//12X,2(8X,F8.5,F8.5) //)') MSYL1(1),MSYL1(2),
-     +        MSYLF(1),MSYLF(2)
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! Debugging JRB
-! The read line below is resulting in a 'Fortran runtime error':
-!   'End of file'
-C         print *, ""
-C         print *, "Hello from AW-RES7.FOR"
-C         print *, "debugz"
-C         print *, "IN2", IN2
-C         print *, "FMT", FMT
-!          print *, "Stopping execution. In DEBUG mode."
-!          stop
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!     
-
+     +        MSYLF(1),MSYLF(2)   
           READ (IN2,FMT) IZ,II,KF(1),K1(1),P1A,KF(2),K1(2)
           READ (IN2,FMT) ISTART
           DO 50 IYR=ISTART+1,-MAX(IQUOTA(1),IQUOTA(2))-1
@@ -316,6 +304,20 @@ C       Read pristine population levels and check the 2 files match
         READ (IN, *) 
         READ (IN, *) IYR, II,PF(1),P1(1),P1A,PF(2),P1(2),P1A,
      +           CM(1),CF(1),CM(2),CF(2)
+
+				!!!!!!!!!!! DEBUGGING !!!!!!!!!!!!!!!!          
+				! Checking my understanding of where these are coming from
+				!print *, "IYR", IYR
+				!print *, "II", II      
+				!print *, "PF(1)", PF(1)
+				!print *, "P1(1)", P1(1)
+				!print *, "P1A", P1A
+				!print *, "PF(2)", PF(2)
+				!print *, "P1(2)", P1(2)
+				!stop
+				!!!!!!!!!!! DEBUGGING !!!!!!!!!!!!!!!!
+          
+     
         IF (IYR.NE.IZ .OR. IYR.GE.0 .OR. KF(1).NE.PF(1) .OR. 
      +         K1(1).NE.P1(1) .OR. KF(2).NE.PF(2) .OR. K1(2).NE.P1(2))
      +     STOP '**** ERROR: files do not match in initial year'
@@ -360,21 +362,17 @@ C AEP UPDATE
 
 C         Read population size & catch in IYR; store & sum variables.
 C         Check zero catch file matches in year 0
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! Debugging JRB
-          print *, ""
-          print *, "FILE #IN: ", IN
-          print *, "About to read file AW-RES"
 
+! file "IN" = file AW-RES
           READ(IN,FMT) I,II,(PF(IS),P1(IS),P1A,IS=1,2),
      +                  (CMS(IS),CFS(IS),IS=1,2),
      +                  (CM(IS),CF(IS),IS=1,2),(RR,J=1,14),
      +                  (ICATPCFG(J),J=1,6)
-          print *, "ICATPCFG", ICATPCFG
-          print *, "ICATPCFG(6)", ICATPCFG(6)          
-          print *, "IYR", IYR
-          print *, "NYEAR", NYEAR          
-          print *, ""          
+!          print *, "ICATPCFG", ICATPCFG
+!          print *, "ICATPCFG(6)", ICATPCFG(6)          
+!          print *, "IYR", IYR
+!          print *, "NYEAR", NYEAR          
+!          print *, ""          
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!               
           IF (IYR.EQ.0.AND.
      +          (PF(1).NE.PFZ(1,NZ,0).OR.PF(2).NE.PFZ(2,NZ,0))) THEN
@@ -386,8 +384,10 @@ C                  STOP
 
 C Risk (depletion) statistics: ------------------------------------------------
           DO 1000 IS = 1,2
-           DF(IS) = PF(IS) / KF(IS)
-           D1(IS) = P1(IS) / K1(IS)
+           DF(IS) = PF(IS) / KF(IS)  ! Depletion of mature females in year IYR
+           D1(IS) = P1(IS) / K1(IS)  ! Depletion of 1+ in year IYR
+           
+           ! Store minimum depletion level over time series
            IF (DF(IS).LT.DFMINA(IS)) DFMINA(IS) = DF(IS)                   [D2]
            IF (D1(IS).LT.D1MINA(IS)) D1MINA(IS) = D1(IS)                   [D2]
 C          Store 1st 2 population trajectories
@@ -418,7 +418,15 @@ C          I1MSYL = 1000 (& hence IYR < I1MSYL) until P1=P1MSYL.
      +                                      N1MSYL(IS) = N1MSYL(IS) + 1    [R3]
            IF (IYR.GE.IFMSYL(IS) .AND. PF(IS).GT.0.9*PFMSYL(IS)) 
      +                                      NFMSYL(IS) = NFMSYL(IS) + 1    [R3]
- 
+
+! -----    Store depletion statistics in year 10 for NOAA 2017-18 hunt plan
+           if (IYR .eq. 10) then
+             !print *, "IYR", IYR
+             !noaa_depl1 = D1(2) 
+             !noaa_deplF = DF(2)
+           end if
+! -----------------------------------------------------------------------------
+
 C *****    Store final statistics for T = ITYEAR. (NB: include stock sizes up to
 C *****    year T + catches up to T-1; increment annual catch statistics later)
            IF (IYR.EQ.ITYEAR(IT)) THEN
@@ -426,6 +434,25 @@ C *****    year T + catches up to T-1; increment annual catch statistics later)
             DEPL1(IS,N,IT)  = D1(IS)                                       [D1]
             DFMIN(IS,N,IT)  = DFMINA(IS)                                   [D2]
             D1MIN(IS,N,IT)  = D1MINA(IS)                                   [D2]
+! DEBUGGING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            !if(is .eq. 2 .and. N .eq. NTRIAL) then
+						!	print *, "IYR", IYR
+						!	print *, "ITYEAR(IT)", ITYEAR(IT)
+						!	print *, "Index of year [IT]", IT
+						!	print *, "Trial number [N]", N
+						!	print *, "Stock number [IS]", IS
+						!	print *, "DEPL1(IS,N,IT)", DEPL1(IS,N,IT)
+						!	print *, ""
+						!	print *, "DEPL1(IS=2,Trial[N],IT)" 
+						!	print *, (I, DEPL1(2, I, IT), I = 1, NTRIAL)
+							
+						!	STOP  !
+							
+            !end if
+             !noaa_depl1 = D1(2) 
+             !noaa_deplF = DF(2)
+! DEBUGGING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!             
+                         
 C           Store population in year IZ1MSY when P* passes MSYL (or else in IYR)
             IF (PFZ(IS,N,0) .GT. PFMSYL(IS)) THEN
               RRF(IS,N,IT) = MIN (1.0, PF(IS)/PFMSYL(IS))                  [R1]
@@ -536,14 +563,14 @@ C          Reset C for next quota period
 ! Debugging JRB
 ! The line of code below is resulting in a 'Fortran runtime error':
 !   Array reference out of bounds for array 'reason', upper bound of dimension 1 exceeded (in file 'AW-RES7.FOR', at line 555)
-          print *, ""
-          print *, "Hello from AW-RES7.FOR"
-          print *, "IS", IS
-          print *, "IYR", IYR
-          print *, "NYEAR", NYEAR
-          print *, "ICATPCFG()", ICATPCFG
-          print *, "ICATPCFG(6)", ICATPCFG(6)
-          print *, "REASON()", REASON
+C         print *, ""
+C         print *, "Hello from AW-RES7.FOR"
+C         print *, "IS", IS
+C         print *, "IYR", IYR
+C         print *, "NYEAR", NYEAR
+C         print *, "ICATPCFG()", ICATPCFG
+C         print *, "ICATPCFG(6)", ICATPCFG(6)
+C         print *, "REASON()", REASON
 C         print *, "Stopping aw-res7.app"
 C         stop
 !          print *, "Stopping execution. In DEBUG mode."
@@ -566,7 +593,7 @@ C          Special for PCFG
 C           
 1000     CONTINUE          
 
-  100   CONTINUE
+  100   CONTINUE  ! Loop over years
 
 C End of trial N. -------------------------------------------------------------
         DO 1010 IS = 1,2
@@ -1018,7 +1045,14 @@ C      go TO 97977
 98200 CONTINUE
 C
       CLOSE(IOUT)
-      CLOSE(IOUT2)   
+      CLOSE(IOUT2) 
+
+! DEBUGGING JRB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !print *, ""
+      !print *, "checking 1+ depletion array" 
+      !print *, 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!      
+        
       STOP
       END
 
