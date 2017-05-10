@@ -10,28 +10,30 @@ The Strike Limit Algorithm for this hunt is based on an alternating season hunt 
   <img src="./figs/FlowChart_4x_12pt.png" width="800" align="center" title="Alternating Season Strike Limit Algorithm">
 </p>
 
+Additional notes are provided in the README.MD files under the subdirectories of this repository (e.g. ./R/README.MD provides file descriptions for the R language scripts used to wrangle data.frames, summerize statistics and generate plots from simulation output).
+
 There are several differences between this SLA and that from 2012, including:
 
   * A winter/spring hunt is assumed to occur during even numbered years. 
-    * The probability of striking a PCFG whale is 0.3
+    * The base-case probability of striking a PCFG whale is 0.3
     * The winter/spring hunt is stopped if either:   
-      * there are 3 strikes, regardless of stock.
-      * the number of PCFG strikes exceeds ABL
-        * struck and lost count as 0.3 PCFG against the ABL
+      * There are 3 strikes, regardless of stock.
+      * The number of PCFG strikes exceeds ABL:
+        * struck and lost count as 0.3 PCFG against the ABL;
         * landed PCFG count as 1.0 against the ABL.
   * During odd years, a summer/fall hunt occurs. 
     * All summer strikes are assumed to be PCFG whales. 
     * The summer/fall hunt is stopped if either: 
       * one whale is landed, or 
       * there are two strikes.
-  * The alternating season hunt does not have block quotas, e.g. no 10 yr block limit on strikes.
+  * The alternating season hunt does not have block quotas, e.g. no 10-year-block limit on strikes; however, the 
   * The annual PCFG Strike Limit in both seasons is calculated as `ABL = PBR - HCM`.  
     * Where:  
-      * `HCM`   = Human Caused Mortality (non-hunting, and set equal to 0.40). 
-        * The ABL evaluated during the 2012 IWC IR did not subtract HCM from PBR (although it was subtracted from the PCFG abundance). 
+      * `HCM`   = Human Caused Mortality (non-hunting, and for the base-case set equal to 0.40). 
+        * The ABL evaluated during the 2012 IWC IR did not subtract HCM from PBR (although HCM was subtracted from the PCFG abundance to mimick reality). 
       * `PBR    = N_MIN * 0.5 * R_MAX * F_R`
-      * `N_MIN` = 20th percentile of the most recent abundance estimate (given log-normal sampling error).
-      * `R_MAX` = 0.062 (Carretta et al. 2015. U.S. Pacific Marine Mammal Stock Assessments).
+      * `N_MIN` = 20th percentile of the most recent abundance estimate (given log-normal sampling error). Base case, same abundance time series as used by the IWC in 2012.
+      * `R_MAX` = 0.062 (Carretta et al. 2015. U.S. Pacific Marine Mammal Stock Assessments). 
         * `R_MAX` was set to 0.04 when calculating limits during the 2012 IWC IR.
       * `F_R`   = 0.50 for undetermined status relative to the Optimum Sustainable Population level under the U.S. MMPA (Carretta et al. 2015).
         * `F_R` was set to 1.0 when calculating limits during the 2012 IWC IR.
