@@ -186,7 +186,7 @@ C          to output.  Skip the same lines in the zero catch file
     6 READ (LINE,'(8X,I2,T41,A)') FISHRY,FMT
 
 C     Set periods for which to set statistics (i.e. set T)
-!      ITYEAR(1) = NYEAR / 5  ! statistics for 20 year time period
+      !ITYEAR(1) = NYEAR / 5  ! statistics for 20 year time period
       ITYEAR(1) = 10  ! statistics for 10 year waiver period for NOAA proposed hunt
       ITYEAR(2) = NYEAR
 
@@ -303,20 +303,7 @@ C       Read zero strike trajectories.
 C       Read pristine population levels and check the 2 files match
         READ (IN, *) 
         READ (IN, *) IYR, II,PF(1),P1(1),P1A,PF(2),P1(2),P1A,
-     +           CM(1),CF(1),CM(2),CF(2)
-
-				!!!!!!!!!!! DEBUGGING !!!!!!!!!!!!!!!!          
-				! Checking my understanding of where these are coming from
-				!print *, "IYR", IYR
-				!print *, "II", II      
-				!print *, "PF(1)", PF(1)
-				!print *, "P1(1)", P1(1)
-				!print *, "P1A", P1A
-				!print *, "PF(2)", PF(2)
-				!print *, "P1(2)", P1(2)
-				!stop
-				!!!!!!!!!!! DEBUGGING !!!!!!!!!!!!!!!!
-          
+     +           CM(1),CF(1),CM(2),CF(2)        
      
         IF (IYR.NE.IZ .OR. IYR.GE.0 .OR. KF(1).NE.PF(1) .OR. 
      +         K1(1).NE.P1(1) .OR. KF(2).NE.PF(2) .OR. K1(2).NE.P1(2))
@@ -711,7 +698,26 @@ C     +        110(/I4,12F8.3)')
 C     Sort arrays
       IF (ISRT.EQ.1) THEN
         CALL SHSORT3 (DEPLF,2,NTRIAL,NTIME,2,100,2)                        [D1]
+        
+! DEBUGGING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!        
+        print *, ""
+        print *, "IT", IT
+        print *, "IS", IS        
+        print *, ""        
+        print *, "pre-sort"
+        print *, "DEPL1(IS=2,Trial[N],IT)" 
+				print *, (I, DEPL1(2, I, 1), I = 1, NTRIAL)
+				        
         CALL SHSORT3 (DEPL1,2,NTRIAL,NTIME,2,100,2)                        [D1]
+
+        ! SHSORT3(ARR,NOPT,NTRIAL,NSORT,IDIM1,IDIM2,IDIM3)
+        print *, ""
+        print *, "post-sort"
+        print *, "DEPL1(IS=2,Trial[N],IT)" 
+				print *, (I, DEPL1(2, I, 1), I = 1, NTRIAL)
+        !stop  !
+! DEBUGGING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
         CALL SHSORT3 (DFMIN,2,NTRIAL,NTIME,2,100,2)                        [D2]
         CALL SHSORT3 (D1MIN,2,NTRIAL,NTIME,2,100,2)                        [D2]
         CALL SHSORT3 (PFINF,2,NTRIAL,1,2,100,1)                            [D8]
@@ -835,6 +841,7 @@ C opt 1: summary line used for SC Hammersmith outputs
      +   CN14(2,I5,2),MED3(CN14,2,I50,2),CN14(2,I96,2),
      +   CN15(2,I5,2),MED3(CN15,2,I50,2),CN15(2,I96,2),
      +   (REASON(I),I=1,5)
+              
       WRITE (IOUT,'(1X,2A)') REF,LINE
       CLOSE (IOUT)
 
@@ -842,6 +849,12 @@ C     Add summary stats line to AW-ALL.OUT
       OPEN (IOUT,FILE='AW-ALL.OUT',ACCESS='APPEND')
       WRITE(IOUT,'(1X,2A)') REF,LINE
       CLOSE(IOUT)
+      
+!     Create a file with 10yr statistics for NOAA hunt plan
+!       10 yrs is the length of time that a MMPA waiver would be in effect
+      open (unit = 666, file='NOAA-DEPL.OUT', access = 'append')
+      write(666, '(1x, a, 1x, F6.3)') REF, DEPL1(2,I5,1)  ! 10yr 5th percentile 1+ PCFG depletion 
+            
 
 C     Add summary stats line to AW-ALL2.OUT
       OPEN (IOUT,FILE='AW-ALL2.OUT',ACCESS='APPEND')
