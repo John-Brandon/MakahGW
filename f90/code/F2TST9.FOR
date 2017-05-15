@@ -441,9 +441,9 @@ C
 C     Otherwise not a conditioning run: read parameter file name & parameters
 			
 C DEBUGGING JRB
-			print *, ""
-			print *, "PAR FILE = ", PARFIL
-			print *, ""			
+      print *, ""
+      print *, "PAR FILE = ", PARFIL
+      print *, ""			
 			
       OPEN (IN4,FILE=PARFIL,STATUS='OLD')
       READ (IN4,*)
@@ -537,13 +537,13 @@ C       Advance population to IYR=0
 C       Check that target was achieved and print out new parameters
         IF (ABS(PHIT(1)-PTARGN(1,N)).GT.8.D0) THEN
           PRINT *, ""        
-        	PRINT *, "Trial Number: ", N
+          PRINT *, "Trial Number: ", N
           WRITE(*,*) ' Target popln 1 not hit',PHIT(1),PTARGN(1,N)
         ENDIF	
         
         IF (ABS(PHIT(2)-PTARGN(2,N)).GT.8.D0) THEN
           PRINT *, ""        
-	        PRINT *, "Trial Number: ", N
+          PRINT *, "Trial Number: ", N
           WRITE(*,*) ' Target popln 2 not hit',PHIT(2),PTARGN(2,N)
         ENDIF
 				     
@@ -599,10 +599,11 @@ C            Ensure 0 <= NEWQ <= NEED
             ENDIF
           ENDIF
 
+! PCFG Quota ---------------------------------------------------------------------
+
 !  Determine if this is a winter/spring or summer hunt. Set variables accordingly. 
-!		Determine if this year is a winter or summer hunt season (alternating between years).
-! 	+  Set NEED equal to max strikes per season (2 for summer, 3 for winter)
-!   +  During the 2012 IWC IR, the proposed hunting season had some overlap between 
+!  +  Set NEED equal to max strikes per season (2 for summer, 3 for winter)
+!  +  During the 2012 IWC IR, the proposed hunting season had some overlap between 
 !        winter / summer. The original code for that evaluation, assumed PCFG
 !        availability, and whether a struck whale was PCFG, etc., changed
 !        on the 1st of May (i.e. MonthHarvest = 5).
@@ -626,8 +627,6 @@ C            Ensure 0 <= NEWQ <= NEED
 !           DeltaFutPCFG = (200.d0 / PhiFutPCFG - 200.d0) / 20000.d0
           end if
 					
-C ----------------------------------------------------------------------------------------				
-! 	PCFG QUOTA	
 C         Test if a new quota is needed for the PFCG area, NEWQ2, is to be set 
 C         this year for use in IYRQ (if NEED(2,IYR)>0, IYR=0) 
           IF (NEED(2,IYR).GT.0.D0 .OR. IYR.EQ.0) THEN
@@ -635,16 +634,15 @@ C         this year for use in IYRQ (if NEED(2,IYR)>0, IYR=0)
             IF (NEED(2,IYR).GT.0.D0) IYRQ = IYR
             
             NEEDI = NEED(2,IYRQ)
-
 C
-C           Call SLC (subsistence limit calculation) to set the block quota.		
+C  Call SLC (subsistence limit calculation) to set the block quota.		
             IF (MANAGE.EQ.' ') THEN            ! Base case 
               NVAL = NEEDI / DBLE(IQUOTA(2))   ! At present, block iquota (= 1) set every year for PCFG
 
 ! Strike Limit Control (SLC) returns variable ABLV for ABL value 
 ! ABL equal to PBR at this stage. 
 ! ABL is modified again further below (e.g. HCM subtracted) 							 
-              CALL SLCPFCG (CATM,CATF,SIGHT,CVX,IYRQ,ICAT1,ISUR1,
+	     CALL SLCPFCG (CATM,CATF,SIGHT,CVX,IYRQ,ICAT1,ISUR1,
      +               NEEDI, NEWQ2,NSIM,IQUOTA(1),ABLV)
 
 !   Subtract incidental human caused mortality from PBR for PCFG
@@ -652,10 +650,10 @@ C           Call SLC (subsistence limit calculation) to set the block quota.
               
 C             Ensure 0 <= NEWQ <= NEED 
              
-! The NOAA algorithm treats ABL differently than the Makah Tribe's proposed  SLA 
+! The NOAA algorithm treats ABL differently than the Makah Tribe's 2012 proposed SLA 
 ! There is a non-binary component in NOAA's SLA:
 ! During winter/spring whaling, if a whale is struck AND
-!   lost, a value of 0.3d0 is counted towards the ABL.
+!   lost, a value of 0.3d0 is counted against the ABL.
 ! In the IWC algorithm, 0.3d0 -> p in a bernoulli trial.
 ! 
               abl_d0(IYR) = ABLV  ! Stash decimal value before rounded down in next line
@@ -772,10 +770,10 @@ C         Set the various counters to zero
 ! REASON 0 --------------------------------------------------------------------
 ! Enforce minimum lower bound that ABL >= 1.0 before hunt can proceed
 !	  if(MANAGE.EQ.' ') then
-	    if(ABLV. LT. 1.d0) then
-              Reason(IYR) = 0  ! If ABL is less than 1.0, no hunt allowed this year
-              GOTO 555
-            end if
+          if(abl_d0(IYR). LT. 1.d0) then
+            Reason(IYR) = 0  ! If ABL is less than 1.0, no hunt allowed this year
+            GOTO 555
+          end if
 !	  end if
 
 ! Error test
@@ -820,9 +818,19 @@ C         Set the various counters to zero
 ! Next strike could, if PCFG struck and landed, count as 1.0 strike against ABL.
 ! Have made the assumption this is how it will be managed, following logic that first
 !   strike not allowed if ABL < 1.0. 
+
+!             if(iyr.eq.0)then
+!               print *, "IYR", IYR
+!	       print *, "abl_d0(IYR)", abl_d0(IYR)
+!	       print *, "PCFGDesignated_d0(IYR)",PCFGDesignated_d0(IYR)
+!	       print *, "abl_d0(IYR) - PCFGDesignated_d0(IYR)",
+!     +	         abl_d0(IYR) - PCFGDesignated_d0(IYR)
+!	     endif
          if (winter_season .eqv. .true.) then
            if (abl_d0(IYR) - PCFGDesignated_d0(IYR) .lt. 1.d0) then
              Reason(IYR) = 4
+	     !print *, "STOPPING"
+	     !stop  !
              GOTO 555
            end if
          end if
@@ -853,14 +861,6 @@ C         Landing Block quota (TotalLands) exceeded?
           BLOCKSTART = MAX(0,INT(IYR/5)*5)  ! Blockstart = IYR
           TotalLands = 0                    ! Re-initialize landings for this year of the 5yr block quota to zero.
 
-! DEBUGGING ----------------------------------------------
-C         if (IYR .LT. 7 .AND. N .LT. 2) then
-C           print *, "IYR", IYR
-C           print *, "BLOCKSTART", BLOCKSTART
-C           print *, "TotalLands", TotalLands
-C         endif
-! DEBUGGING ----------------------------------------------
-
           DO IYR2 = BlockStart, IYR         ! Increment total numbers landed for this quota block 
             TotalLands = TotalLands + Landed(IYR2)  ! TotalLands for 2017 seasonal hunt should be annual sum
           END DO
@@ -881,17 +881,47 @@ C         endif
 C        Assign true catch to stock given PropPCFG (availability = ProbPCFG, i.e. ~0.30). 
 C        Update probability of identifying as PCFG (and counting against ABL), 
 C         given false negative and false positive ID probabilities.
-          IF (RAND. LT. PropPCFG) THEN
-            pcfg_strike = .TRUE.
-            CATPCFG = CATPCFG + 1 
+
+          if (winter_season) then
+            if (RAND .LT. PropPCFG) then  
+              pcfg_strike = .TRUE.   ! PCFG strike during migration season
+	      CATPCFG = CATPCFG + 1
+              stock_strikes(2, IYR) = stock_strikes(2, IYR) + 1.d0
+              ProbDetect = (1 - ProbFalseNegUsed)	  
+	    else
+              pcfg_strike = .FALSE.  ! Non-PCFG strike during migration          
+              CATNORTH = CATNORTH + 1 
+              stock_strikes(1, IYR) = stock_strikes(1, IYR) + 1.d0            
+              ProbDetect = ProbFalsePosUsed
+	    endif
+	  else
+            pcfg_strike = .TRUE.     ! PCFG strike during summer
+	    CATPCFG = CATPCFG + 1
             stock_strikes(2, IYR) = stock_strikes(2, IYR) + 1.d0
-            ProbDetect = (1-ProbFalseNegUsed)
-          ELSE
-            pcfg_strike = .FALSE.          
-            CATNORTH = CATNORTH + 1 
-            stock_strikes(1, IYR) = stock_strikes(1, IYR) + 1.d0            
-            ProbDetect = ProbFalsePosUsed
-          ENDIF
+            ProbDetect = (1 - ProbFalseNegUsed)	  
+	  endif
+          !if(iyr.eq.4)then
+	  !  print *, "pcfg_strike", pcfg_strike
+	  !endif
+	  !if(iyr.eq.5)then 
+	  !  stop  !
+	  !endif
+!          IF (RAND. LT. PropPCFG) THEN
+!	    if(iyr.eq.1)then
+!	      print *, "RAND", RAND
+!	      print *, "PropPCFG", PropPCFG
+!	      stop  !
+!	    endif
+!            pcfg_strike = .TRUE.
+!            CATPCFG = CATPCFG + 1 
+!            stock_strikes(2, IYR) = stock_strikes(2, IYR) + 1.d0
+!            ProbDetect = (1-ProbFalseNegUsed)
+!          ELSE
+!            pcfg_strike = .FALSE.          
+!            CATNORTH = CATNORTH + 1 
+!            stock_strikes(1, IYR) = stock_strikes(1, IYR) + 1.d0            
+!            ProbDetect = ProbFalsePosUsed
+!          ENDIF
 
           Strikes(IYR) = Strikes(IYR) + 1  ! INCREMENT STRIKES FOR THIS YEAR
 
@@ -908,15 +938,34 @@ C
           ENDIF
           
 ! Tally landed whales by stock ---------------------------------------------------
-          if (pcfg_strike .eqv. .false. .and.
-     +        StruckAndLost .eqv. .false.) then 
-              stock_landings(1, IYR) = stock_landings(1, IYR) + 1.d0  ! Non-PCFG strike
-          endif  
+          if (StruckAndLost .eqv. .false.) then
+            if (pcfg_strike .eqv. .false.) then
+              stock_landings(1,IYR) = stock_landings(1,IYR) + 1.d0
+	    else
+              stock_landings(2,IYR) = stock_landings(2,IYR) + 1.d0
+	    endif
+	  endif
 
-          if (pcfg_strike .eqv. .true. .and.
-     +        StruckAndLost .eqv. .false.) then
-              stock_landings(2, IYR) = stock_landings(2, IYR) + 1.d0  ! PCFG strike
-          endif                     
+! DEBUGGING !!!!!!!!!!!!!!!!!!!!!
+C    if(IYR.eq.3) then
+C      print *, ""
+C      print *, "IYR", IYR
+C      print *, "winter_season", winter_season
+C      print *, "PropPCFG", PropPCFG
+C      print *, "rand", rand
+C      print *, "pcfg_strike", pcfg_strike
+C      print *, "CATPCFG",CATPCFG
+C      print *, "stock_strikes(1,IYR)",stock_strikes(1,IYR)
+C      print *, "stock_strikes(2,IYR)",stock_strikes(2,IYR)
+C      print *, "stock_landings(1,IYR)",stock_landings(1,IYR)
+C      print *, "stock_landings(2,IYR)",stock_landings(2,IYR)
+C  endif
+C  if(iyr.eq.4)then
+C    print *, "STOPPING IN DEBUG MODE"
+C    stop !
+C  endif
+	  !if(rand.lt.PropPCFG) then
+	  !endif
 !
 ! Rules differs depend on whether the animals was struck and lost ----------------
 !
@@ -969,30 +1018,30 @@ C           Landed - now match against catalogue -------------------------------
 C
 C           Is Detected?
             if (winter_season .eqv. .TRUE.) then
-            	RAND = RAN1(ISEED5,MA5,INEXT5,INEXTP5)
-            	IF (RAND. LT. ProbDetect) THEN
-               PCFGDesignated(IYR) = PCFGDesignated(IYR) + 1
-               PCFGDesignated_d0(IYR) = PCFGDesignated_d0(IYR) + 1.d0
-            	END IF
-						else
-							PCFGDesignated(IYR) = PCFGDesignated(IYR) + 1
-							PCFGDesignated_d0(IYR) = PCFGDesignated_d0(IYR) + 1.d0
-						end if
+              RAND = RAN1(ISEED5,MA5,INEXT5,INEXTP5)
+              IF (RAND. LT. ProbDetect) THEN
+                PCFGDesignated(IYR) = PCFGDesignated(IYR) + 1
+                PCFGDesignated_d0(IYR) = PCFGDesignated_d0(IYR) + 1.d0
+              END IF
+            else
+              PCFGDesignated(IYR) = PCFGDesignated(IYR) + 1
+              PCFGDesignated_d0(IYR) = PCFGDesignated_d0(IYR) + 1.d0
+            end if
           ENDIF       
 C          
 C          
 ! REASONS 5 AND 6 ---------------------------------------------------------------	
 C         Stop SUMMER harvest if any single whale is landed
 C         This chunk replaced the 2012 code of five whales landed 
-					IF (winter_season .NEQV. .TRUE.) THEN  ! Summer / Spring hunt year
+          IF (winter_season .NEQV. .TRUE.) THEN  ! Summer / Spring hunt year
             if (Landed(IYR) .eq. 1 .and. Strikes(IYR) .eq. 1) then 
               Reason(IYR) = 5
-							GOTO 555
-						end if
-						if (Landed(IYR) .eq. 1 .and. Strikes(IYR) .eq. 2) then
-							Reason(IYR) = 6 
-							GOTO 555
-						end if
+              GOTO 555
+            end if
+            if (Landed(IYR) .eq. 1 .and. Strikes(IYR) .eq. 2) then
+              Reason(IYR) = 6 
+              GOTO 555
+            end if
           END IF
           
           GOTO 556  ! Strike taken, loop to next potential strike 
@@ -3145,15 +3194,19 @@ C     REPORT prints out population size & catch arrays from year 0
       !STOP  !
 
 
-      WRITE (IOUT,'(A4,1x,A4,1x,40(A8))') 'Year','Year',
+      WRITE (IOUT,'(A4,1x,A4,1x,555(A8))') 'Year','Year',
      +   ('MtFem','1+Pop','SurvP',I=1,2),
      +   '1-CM','1-CF','2-CM','2-CF',
      +   'A-CM','A-CF','B-CM','B-CF','C-CM','C-CF','D-CM','D-CF',
      +   'SIGHT-A','CV-A','SIGHT-B','CV-B',
      +   'CALF-1','CALF-2','RY-1','RY-2','NEXP-1','NEXP-2',
-     +   'ABL','Strike','Landed','S&L','NA','Reason',
+     +   'abl_d0',
+     +   'Strike','Landed','S&L',
+     +   'PCFGDes',
+     +   'Reason',
      +   'INC-1','INC-2','Immigr', 
-     +   'strik_1','landd_1'
+     +   'strik_1','strik_2',
+     +   'land_1', 'land_2'
 ! CATNORTH, CATPCFG, stock_landings(1, IYR), stock_strikes(1, IYR)                       
       IYR= INITYR  ! Appears variable INITYR has been declared with global scope and set above
       ! Debugging JRB
@@ -3174,10 +3227,16 @@ C     REPORT prints out population size & catch arrays from year 0
      +               -1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,
      +               -1.0d0,-1.0d0,-1.0d0,-1.0d0,
      +                -1,-1,-1.0,-1.0,
-     +               (NINT(NEXP(IS,IYR)),IS=1,2),-1,-1,-2,-2,-2,-2,
-     +                -1.0,-1.0,-1.0, -1.0, -1.0
+     +               (NINT(NEXP(IS,IYR)),IS=1,2),
+     +               -1.d0,     ! abl_d0
+     +               -1,-2,-2,  ! Strike, Landed, S&L
+     +               -2.d0,     ! PCFGDesignated
+     +               -2,        ! Reason
+     +               -1.0,-1.0,-1.0,
+     +               -1.d0,-1.d0,  ! stock_strikes
+     +               -1.d0, -1.d0  ! stock_landings
       DO IYR = IYRPRJ,ISUR1-1
-       WRITE(IOUT,99) IYR,IYR+IYRMAN,
+        WRITE(IOUT,99) IYR,IYR+IYRMAN,
      +               (NINT(PMATF(IS,IYR)),NINT(PSURV(IS,IYR)),
      +                NINT(PSURVOBS(IS,IYR)),IS=1,2),
      +               (CATCHM(IS,IYR),CATCHF(IS,IYR),IS=1,2),
@@ -3185,12 +3244,17 @@ C     REPORT prints out population size & catch arrays from year 0
      +               -1.0d0,-1.0d0,-1.0d0,-1.0d0,
      +               (NINT(PCALF(IS,IYR)),IS=1,2),
      +               -1.0,-1.0,
-     +               (NINT(NEXP(IS,IYR)),IS=1,2),-1,-1,-2,-2,-2,-2,
+     +               (NINT(NEXP(IS,IYR)),IS=1,2),
+     +               -1.d0,     ! abl_d0
+     +               -1,-2,-2,  ! Strike, Landed, S&L
+     +               -2.d0,     ! PCFGDesignated
+     +               -2,        ! Reason
      +               (INCCAT(IS,IYR),IS=1,2),TOTALIMMI(IYR),
-     +               stock_strikes(1,IYR), stock_landings(1,IYR)
+     +               stock_strikes(1,IYR), stock_strikes(2,IYR),
+     +               stock_landings(1,IYR), stock_landings(2,IYR)
       END DO
       DO IYR = ISUR1,NYEAR-1
-       WRITE(IOUT,99) IYR,IYR+IYRMAN,
+        WRITE(IOUT,99) IYR,IYR+IYRMAN,
      +               (NINT(PMATF(IS,IYR)),NINT(PSURV(IS,IYR)),
      +                NINT(PSURVOBS(IS,IYR)),IS=1,2),
      +               (CATCHM(IS,IYR),CATCHF(IS,IYR),IS=1,2),
@@ -3198,17 +3262,27 @@ C     REPORT prints out population size & catch arrays from year 0
      +               (SIGHT(IS,IYR),CVX(IS,IYR),IS=1,2),
      +               (NINT(PCALF(IS,IYR)),IS=1,2),
      +               -1.0,-1.0,
-     +               (NINT(NEXP(IS,IYR)),IS=1,2),ABL(IYR),Strikes(IYR),
-     +               Landed(IYR),StruckLost(IYR),
-     +               PCFGDesignated(IYR),Reason(IYR),
+     +               (NINT(NEXP(IS,IYR)),IS=1,2),
+     +               abl_d0(IYR),
+     +               Strikes(IYR),Landed(IYR),StruckLost(IYR),
+     +               PCFGDesignated_d0(IYR),
+     +               Reason(IYR),
      +               (INCCAT(IS,IYR),IS=1,2),TOTALIMMI(IYR),
-     +               stock_strikes(1,IYR), stock_landings(1,IYR)
+     +               stock_strikes(1,IYR), stock_strikes(2,IYR),
+     +               stock_landings(1,IYR), stock_landings(2,IYR)
       END DO
       WRITE (IOUT,99) NYEAR,NYEAR+IYRMAN, 
      +  (NINT(PMATF(IS,NYEAR)),NINT(PSURV(IS,NYEAR)),
      +   NINT(PSURVOBS(IS,IYR)),IS=1,2)
-   99 FORMAT (I4,1x,I4,1x,6I8,12F8.2,2(F8.1,F8.4),2I8,2F8.1,2I8,
-     +   6(I8),55555(F8.2))
+   99 FORMAT (I4,1x,I4,1x,6I8,12F8.2,2(F8.1,F8.4),
+     +   2I8,
+     +   2F8.1,
+     +   2I8,
+     +   F8.2, 
+     +   3(I8), 
+     +   F8.2, 
+     +   I8, 
+     +   55555(F8.2)) 
       RETURN
       END
 
