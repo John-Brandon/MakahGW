@@ -38,7 +38,7 @@ Additional notes are provided in the README.MD files under the subdirectories of
       * `F_R`   = 0.50 for undetermined status relative to the Optimum Sustainable Population level under the U.S. MMPA (Carretta et al. 2015).
         * `F_R` was set to 1.0 when calculating limits during the 2012 IWC IR.
  
-## Reasons and corresponding IDs for stopping the hunt (see also the `Reason` vector in `*.FOR` code):
+## Reasons and corresponding IDs for stopping the hunt:
      0. ABL is less than 1.0
      1. Limit of 2 strikes during summer/fall hunt reached.
      2. Limit of 3 strikes during winter/spring hunt reached. 
@@ -46,7 +46,8 @@ Additional notes are provided in the README.MD files under the subdirectories of
      4. Next strike could exceed ABL during winter/spring hunt. 
      5. Landed one whale during summer/fall hunt on first strike.
      6. Landed one whale during summer/fall hunt on second strike.
--->
+
+See also the `Reason` vector in the `F2TST9.FOR` code file (where the stoppages are tallied), which also corresponds to the `ICATPCFG` vector in the `AW-RES7.FOR` code file (where summary statistics for each trial are compiled). 
 
 ## JB's Environment:
 1. OS: Mac OS 10.11.6 (El Cap).
