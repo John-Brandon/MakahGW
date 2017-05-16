@@ -10,9 +10,9 @@ The Strike Limit Algorithm for this hunt is based on an alternating season hunt 
   <img src="./figs/FlowChart_4x_12pt.png" width="800" align="center" title="Alternating Season Strike Limit Algorithm">
 </p>
 
-Additional notes are provided in the README.MD files under the subdirectories of this repository (e.g. ./R/README.MD provides file descriptions for the R language scripts used to wrangle data.frames, summerize statistics and generate plots from simulation output).
+Additional notes are provided in the README.MD files under the subdirectories of this repository, *e.g.* `./R/README.MD` provides file descriptions for the R language scripts used to wrangle data.frames, summerize statistics and generate plots from simulation output.
 
-There are several differences between this SLA and that from 2012, including:
+## There are several differences between this SLA and that from 2012, including:
 
   * A winter/spring hunt is assumed to occur during even numbered years. 
     * The base-case probability of striking a PCFG whale is 0.3
@@ -37,14 +37,15 @@ There are several differences between this SLA and that from 2012, including:
         * `R_MAX` was set to 0.04 when calculating limits during the 2012 IWC IR.
       * `F_R`   = 0.50 for undetermined status relative to the Optimum Sustainable Population level under the U.S. MMPA (Carretta et al. 2015).
         * `F_R` was set to 1.0 when calculating limits during the 2012 IWC IR.
-
-<!--
-## Project notes: 
-1. Reasons and corresponding IDs for stopping the hunt (see also the `Reason` vector in `*.FOR` code):
-     1. 2 strikes during summer hunt year.
-     2. 3 strikes total during winter/spring hunt year. 
-     3. PCFG strike limit (ABL) reached.
-     4. Landed one whale in summer.
+ 
+## Reasons and corresponding IDs for stopping the hunt (see also the `Reason` vector in `*.FOR` code):
+     0. ABL is less than 1.0
+     1. Limit of 2 strikes during summer/fall hunt reached.
+     2. Limit of 3 strikes during winter/spring hunt reached. 
+     3. 1 strike taken during summer/fall hunt, and ABL is less than 2.0.
+     4. Next strike could exceed ABL during winter/spring hunt. 
+     5. Landed one whale during summer/fall hunt on first strike.
+     6. Landed one whale during summer/fall hunt on second strike.
 -->
 
 ## JB's Environment:
