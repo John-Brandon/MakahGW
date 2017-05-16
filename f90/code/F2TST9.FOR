@@ -3145,9 +3145,26 @@ C     Print parameter list & check values are within range.
       WRITE (IOUT,95) 'Target year',IYRTAR
       WRITE (IOUT,96) 'Aboriginal catch multiplier','ABOMUL',ABOMUL
       WRITE (IOUT,97) 'Parameter file',PARFIL
+!      WRITE (IOUT,97) 'Fishery 2: Bowheads;  format',
+!     +  '(I4,1x,I4,1x,6F8.0,12F8.2,2(F8.1,F8.4),2F8.0,2F8.1,2F8.0,
+!     +   6(I8),3(F8.2))'
       WRITE (IOUT,97) 'Fishery 2: Bowheads;  format',
      +  '(I4,1x,I4,1x,6F8.0,12F8.2,2(F8.1,F8.4),2F8.0,2F8.1,2F8.0,
-     +   6(I8),3(F8.2))'
+     +   6(I8),3(F8.2), 6(F8.2))'
+!      WRITE (IOUT,97) 'Fishery 2: Bowheads;  format',
+!     +  '(I4,1x,I4,1x,6F8.0,12F8.2,2(F8.1,F8.4),2F8.0,2F8.1,2F8.0,
+!     +   F8.2,3(I8),F8.2,I8,7(F8.2))'
+           
+C    +  '(I4,1x,I4,1x,
+C    +    6F8.0,
+C    +    12F8.2,
+C    +    2(F8.1,F8.4),
+C    +    2F8.0,
+C    +    2F8.1,
+C    +    2F8.0,
+C    +    6(I8),
+C    +    3(F8.2))'
+
       WRITE (IOUT,'(/A,(T8,10F8.2))')' Need:',(NEED(1,I),I=0,NYEAR-1,
      +                                         IQUOTA(1))
       WRITE (IOUT,'(/A,(T8,10F8.2))')' Need:',(NEED(2,I),I=0,NYEAR-1,
@@ -3200,13 +3217,14 @@ C     REPORT prints out population size & catch arrays from year 0
      +   'A-CM','A-CF','B-CM','B-CF','C-CM','C-CF','D-CM','D-CF',
      +   'SIGHT-A','CV-A','SIGHT-B','CV-B',
      +   'CALF-1','CALF-2','RY-1','RY-2','NEXP-1','NEXP-2',
-     +   'abl_d0',
+     +   'ABL',
      +   'Strike','Landed','S&L',
      +   'PCFGDes',
      +   'Reason',
      +   'INC-1','INC-2','Immigr', 
      +   'strik_1','strik_2',
-     +   'land_1', 'land_2'
+     +   'land_1', 'land_2',
+     +   'abl_d0', 'PCFGDd0'
 ! CATNORTH, CATPCFG, stock_landings(1, IYR), stock_strikes(1, IYR)                       
       IYR= INITYR  ! Appears variable INITYR has been declared with global scope and set above
       ! Debugging JRB
@@ -3228,13 +3246,15 @@ C     REPORT prints out population size & catch arrays from year 0
      +               -1.0d0,-1.0d0,-1.0d0,-1.0d0,
      +                -1,-1,-1.0,-1.0,
      +               (NINT(NEXP(IS,IYR)),IS=1,2),
-     +               -1.d0,     ! abl_d0
+     +               -1,        ! ABL
      +               -1,-2,-2,  ! Strike, Landed, S&L
-     +               -2.d0,     ! PCFGDesignated
+     +               -2,        ! PCFGDesignated
      +               -2,        ! Reason
-     +               -1.0,-1.0,-1.0,
+     +               -1.0,-1.0,-1.0,  ! INC-1, INC-2, Immigr
      +               -1.d0,-1.d0,  ! stock_strikes
-     +               -1.d0, -1.d0  ! stock_landings
+     +               -1.d0, -1.d0,  ! stock_landings
+     +               -1.d0, -1.d0  ! abl_d0, PCFGDesignated_d0
+!     +               -2.d0
       DO IYR = IYRPRJ,ISUR1-1
         WRITE(IOUT,99) IYR,IYR+IYRMAN,
      +               (NINT(PMATF(IS,IYR)),NINT(PSURV(IS,IYR)),
@@ -3245,13 +3265,14 @@ C     REPORT prints out population size & catch arrays from year 0
      +               (NINT(PCALF(IS,IYR)),IS=1,2),
      +               -1.0,-1.0,
      +               (NINT(NEXP(IS,IYR)),IS=1,2),
-     +               -1.d0,     ! abl_d0
+     +               -1,        ! ABL
      +               -1,-2,-2,  ! Strike, Landed, S&L
-     +               -2.d0,     ! PCFGDesignated
+     +               -2,        ! PCFGDesignated
      +               -2,        ! Reason
      +               (INCCAT(IS,IYR),IS=1,2),TOTALIMMI(IYR),
      +               stock_strikes(1,IYR), stock_strikes(2,IYR),
-     +               stock_landings(1,IYR), stock_landings(2,IYR)
+     +               stock_landings(1,IYR), stock_landings(2,IYR),
+     +               abl_d0(IYR), PCFGDesignated_d0(IYR)
       END DO
       DO IYR = ISUR1,NYEAR-1
         WRITE(IOUT,99) IYR,IYR+IYRMAN,
@@ -3263,26 +3284,29 @@ C     REPORT prints out population size & catch arrays from year 0
      +               (NINT(PCALF(IS,IYR)),IS=1,2),
      +               -1.0,-1.0,
      +               (NINT(NEXP(IS,IYR)),IS=1,2),
-     +               abl_d0(IYR),
+     +               ABL(IYR),
      +               Strikes(IYR),Landed(IYR),StruckLost(IYR),
-     +               PCFGDesignated_d0(IYR),
+     +               PCFGDesignated(IYR),
      +               Reason(IYR),
      +               (INCCAT(IS,IYR),IS=1,2),TOTALIMMI(IYR),
      +               stock_strikes(1,IYR), stock_strikes(2,IYR),
-     +               stock_landings(1,IYR), stock_landings(2,IYR)
+     +               stock_landings(1,IYR), stock_landings(2,IYR),
+     +               abl_d0(IYR), PCFGDesignated_d0(IYR)
       END DO
       WRITE (IOUT,99) NYEAR,NYEAR+IYRMAN, 
      +  (NINT(PMATF(IS,NYEAR)),NINT(PSURV(IS,NYEAR)),
      +   NINT(PSURVOBS(IS,IYR)),IS=1,2)
+
+!     +  '(I4,1x,I4,1x,6F8.0,12F8.2,2(F8.1,F8.4),2F8.0,2F8.1,2F8.0,
+!     +   6(I8),3(F8.2), 6(F8.2))'
+
    99 FORMAT (I4,1x,I4,1x,6I8,12F8.2,2(F8.1,F8.4),
      +   2I8,
      +   2F8.1,
      +   2I8,
-     +   F8.2, 
-     +   3(I8), 
-     +   F8.2, 
-     +   I8, 
-     +   55555(F8.2)) 
+     +   6(I8), 
+     +   9(F8.2)) 
+
       RETURN
       END
 
